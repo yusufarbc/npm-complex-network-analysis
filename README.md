@@ -31,8 +31,8 @@ pip install -r requirements.txt
 - `report.md`: Kısa sıralamalar (in/out/between; tüm düğümler ve Top N)
 - `top_packages.txt`: Kullanılan Top N isimleri (kopya)
 - Görseller:
-  - `network_full_top200.png/.svg` — Tüm ağ
-  - `network_top200_only.png/.svg` — Sadece Top 200 alt-ağ
+  - `network_full_topN.png/.svg` — Tüm ağ
+  - `network_topN_only.png/.svg` — Sadece Top 200 alt-ağ
   - `top10_in_degree.png`, `top10_out_degree.png`, `top10_betweenness.png`, `top10_leaders.png`
 
 ## Varsayımlar ve Sınırlamalar
@@ -44,3 +44,4 @@ pip install -r requirements.txt
 ## Proje Yapısı
 - `analysis_helpers.py`: Yardımcı fonksiyonların tamamı (Türkçe açıklamalı)
 - `analysis.ipynb`: Adım adım analiz, görseller ve çıktı üretimi
+
