@@ -74,3 +74,11 @@ Varsayılan davranış
 - `src/analyze_npm_network.py`: Top‑N’i alır veya dosyadan okur, NetworkX ile grafı kurar, metrikleri hesaplar ve çıktıları üretir.
 - `analysis.ipynb`: Adım adım defter; Top‑N getirme, ağ kurma, metrik hesaplama ve saklama.
 - `data/top_200.txt`: Kanonik Top 200 listesi (sürüm kontrollü). Diğer `data/*` çıktıları git tarafından yok sayılır.
+
+
+
+### Görselleştirme
+- Defter, tüm ağ ve yalnızca Top 200 indüklenmiş alt-ağın çizimini oluşturur.
+- Görseller kaydedilir: 
+  - results/network_full_top200.png (ve .svg)
+  - results/network_top200_only.png (ve .svg)
