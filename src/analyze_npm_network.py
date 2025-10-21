@@ -254,23 +254,23 @@ def read_list(path: Path) -> list[str]:
 def main():
     parser = argparse.ArgumentParser(
         description=(
-            "Build a directed dependency graph for Top-N npm packages and compute centralities."
+            "Top-N NPM paketleri icin yonlu bagimlilik agi kur ve merkeziyet metriklerini hesapla"
         )
     )
-    parser.add_argument("--top", type=int, default=100, help="Number of top packages")
+    parser.add_argument("--top", type=int, default=100, help="En populer kac paket")
     parser.add_argument(
-        "--outdir", type=str, default="results", help="Output directory for artifacts"
+        "--outdir", type=str, default="results", help="Cikti dizini (raporlar ve dosyalar)"
     )
     parser.add_argument(
         "--input-list",
         type=str,
         default=None,
-        help="Path to a newline-separated package list (overrides fetching)",
+        help="Satir bazli paket listesi dosya yolu (indirme yerine bunu kullan)",
     )
     parser.add_argument(
         "--list-only",
         action="store_true",
-        help="Only fetch and save the Top-N list, skip dependency graph",
+        help="Sadece Top-N listesini indir/kaydet, ag kurmayi atla",
     )
     args = parser.parse_args()
 
@@ -286,34 +286,34 @@ def main():
         src_list = default_list
 
     if src_list is not None:
-        print(f"Reading package list from {src_list} ...")
+        print(f"Paket listesi okunuyor: {src_list} ...")
         top_packages = read_list(src_list)
-        print(f"Loaded {len(top_packages)} package names.")
+        print(f"Toplam {len(top_packages)} paket yüklendi.")
     else:
-        print(f"Fetching Top {args.top} packages by downloads...")
+        print(f"Indirmelere gore Top {args.top} paket getiriliyor...")
         top_packages = fetch_top_packages(args.top)
-        print(f"Fetched {len(top_packages)} packages.")
+        print(f"Toplam {len(top_packages)} paket cekildi.")
 
     # Save the cohort list first
     (out_dir / "top_packages.txt").write_text("\n".join(top_packages), encoding="utf-8")
     if args.list_only:
-        print("List-only mode: saved Top-N package names; skipping graph build.")
+        print("Sadece liste modu: Top-N paket isimleri kaydedildi; ag kurulumu atlandi.")
         print(f"- {out_dir / 'top_packages.txt'}")
         return
 
-    print("Building dependency graph (Dependent -> Dependency)...")
+    print("Bagimlilik agi kuruluyor (Dependent -> Dependency)...")
     G, top_set = build_dependency_graph(top_packages)
-    print(f"Graph nodes: {G.number_of_nodes()}, edges: {G.number_of_edges()}")
+    print(f"Dugum sayisi: {G.number_of_nodes()}, kenar sayisi: {G.number_of_edges()}")
 
-    print("Computing centrality metrics (in-degree, betweenness)...")
+    print("Merkeziyet metrikleri hesaplaniyor (in-degree, betweenness)...")
     in_deg, btw = compute_metrics(G)
 
-    print("Saving artifacts...")
+    print("Sonuclar kaydediliyor...")
     save_edges(G, out_dir / "edges.csv")
     save_metrics(in_deg, btw, top_set, out_dir / "metrics.csv")
     save_report(in_deg, btw, top_set, out_dir / "report.md")
 
-    print("Done. Artifacts written to:")
+    print("Tamam. Asagidaki dosyalar olusturuldu:")
     print(f"- {out_dir / 'edges.csv'}")
     print(f"- {out_dir / 'metrics.csv'}")
     print(f"- {out_dir / 'report.md'}")
