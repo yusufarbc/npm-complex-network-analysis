@@ -241,6 +241,16 @@ def save_report(
     out_path.write_text("\n".join(lines), encoding="utf-8")
 
 
+def read_list(path: Path) -> list[str]:
+    if not path.exists():
+        return []
+    return [
+        line.strip()
+        for line in path.read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
+
+
 def main():
     parser = argparse.ArgumentParser(
         description=(
@@ -252,6 +262,12 @@ def main():
         "--outdir", type=str, default="data", help="Output directory for artifacts"
     )
     parser.add_argument(
+        "--input-list",
+        type=str,
+        default=None,
+        help="Path to a newline-separated package list (overrides fetching)",
+    )
+    parser.add_argument(
         "--list-only",
         action="store_true",
         help="Only fetch and save the Top-N list, skip dependency graph",
@@ -261,9 +277,15 @@ def main():
     out_dir = Path(args.outdir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    print(f"Fetching Top {args.top} packages by downloads...")
-    top_packages = fetch_top_packages(args.top)
-    print(f"Fetched {len(top_packages)} packages.")
+    if args.input_list:
+        src_list = Path(args.input_list)
+        print(f"Reading package list from {src_list} ...")
+        top_packages = read_list(src_list)
+        print(f"Loaded {len(top_packages)} package names.")
+    else:
+        print(f"Fetching Top {args.top} packages by downloads...")
+        top_packages = fetch_top_packages(args.top)
+        print(f"Fetched {len(top_packages)} packages.")
 
     # Save the cohort list first
     (out_dir / "top_packages.txt").write_text("\n".join(top_packages), encoding="utf-8")

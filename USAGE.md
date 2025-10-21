@@ -33,6 +33,14 @@ Notes:
 - Dependencies are read from npm registry for each package’s latest version.
 - Betweenness centrality is computed on the full graph; reported both overall and for the Top-N cohort.
 
+## Use npm-leaderboard Top 200 list (preferred)
+
+This repo includes a canonical list at `data/top_200.txt` sourced via the same pipeline as npm-leaderboard. You can build the graph directly from it:
+
+```
+python src/analyze_npm_network.py --input-list data/top_200.txt --outdir data_nb_200
+```
+
 ## Fetch Top 20,000 List Only
 
 If you only need the Top 20,000 by downloads (without building the graph):
