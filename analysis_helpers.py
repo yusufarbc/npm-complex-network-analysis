@@ -129,7 +129,11 @@ def encode_npm_name(name: str) -> str:
 
 
 # Bir paketin en guncel surumunden dependencies alanini cek
-def fetch_dependencies(package: str, session: Optional[requests.Session] = None) -> Dict[str, str]:
+def fetch_dependencies(
+    package: str,
+    session: Optional[requests.Session] = None,
+    include_peer: bool = False,
+) -> Dict[str, str]:
     """Paketin npm registry'deki en guncel surumunden `dependencies` alanini cek.
 
     Daha verimli olmak icin paylasilan bir `requests.Session` (varsa) kullanir.
@@ -157,6 +161,11 @@ def fetch_dependencies(package: str, session: Optional[requests.Session] = None)
         version_obj = {}
 
     deps = version_obj.get("dependencies", {}) if isinstance(version_obj, dict) else {}
+    if include_peer:
+        peer = version_obj.get("peerDependencies", {}) if isinstance(version_obj, dict) else {}
+        if isinstance(peer, dict):
+            # Birleşim (key set); aynı anahtar varsa dependencies öncelikli
+            deps = dict({**peer, **(deps if isinstance(deps, dict) else {})})
     return deps if isinstance(deps, dict) else {}
 
 
@@ -186,7 +195,9 @@ def _save_cache(path: Path, cache: Dict[str, Dict[str, str]]) -> None:
 
 # Top N listesinden yonlu bagimlilik agi kur (Dependent -> Dependency)
 def build_dependency_graph(
-    top_packages: List[str], cache_path: Optional[Path] = None
+    top_packages: List[str],
+    cache_path: Optional[Path] = None,
+    include_peer_deps: bool = False,
 ) -> Tuple[nx.DiGraph, Set[str]]:
     """Top N listesi icin yonlu bir bagimlilik agi (Dependent -> Dependency) kur ve dondur.
 
@@ -210,7 +221,7 @@ def build_dependency_graph(
                 # Basit 3 denemeli cekim
                 deps = {}
                 for _ in range(3):
-                    deps = fetch_dependencies(pkg, session=session)
+                    deps = fetch_dependencies(pkg, session=session, include_peer=include_peer_deps)
                     if deps:
                         break
                 cache[pkg] = deps
@@ -243,6 +254,87 @@ def compute_metrics(
     else:
         btw = nx.betweenness_centrality(G, normalized=True)
     return in_deg, out_deg, btw
+
+
+# --- Risk skoru (bilesik) ---
+def _minmax_norm(values: Dict[str, float]) -> Dict[str, float]:
+    """Min‑max normalize et (tum degerler ayniysa 0 dondur)."""
+    if not values:
+        return {}
+    vmin = min(values.values())
+    vmax = max(values.values())
+    if vmax <= vmin:
+        return {k: 0.0 for k in values}
+    return {k: (v - vmin) / (vmax - vmin) for k, v in values.items()}
+
+
+def compute_risk_scores(
+    in_deg: Dict[str, int],
+    out_deg: Dict[str, int],
+    btw: Dict[str, float],
+    w_in: float = 0.5,
+    w_out: float = 0.2,
+    w_btw: float = 0.3,
+) -> Dict[str, float]:
+    """Normalize (min‑max) edilmis in/out/between ile bilesik risk skoru hesapla."""
+    # float donusturme
+    in_f = {k: float(v) for k, v in in_deg.items()}
+    out_f = {k: float(v) for k, v in out_deg.items()}
+    in_n = _minmax_norm(in_f)
+    out_n = _minmax_norm(out_f)
+    btw_n = _minmax_norm(btw)
+    nodes = set(in_deg) | set(out_deg) | set(btw)
+    scores: Dict[str, float] = {}
+    for n in nodes:
+        scores[n] = w_in * in_n.get(n, 0.0) + w_out * out_n.get(n, 0.0) + w_btw * btw_n.get(n, 0.0)
+    return scores
+
+
+def save_risk_scores(
+    risk: Dict[str, float],
+    in_deg: Dict[str, int],
+    out_deg: Dict[str, int],
+    btw: Dict[str, float],
+    top_set: Set[str],
+    out_path: Path,
+) -> None:
+    """Risk skorlarini CSV olarak kaydet (paket, risk, in, out, between, is_topN)."""
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    with out_path.open("w", newline="", encoding="utf-8") as f:
+        w = csv.writer(f)
+        w.writerow(["package", "risk_score", "in_degree", "out_degree", "betweenness", "is_topN"])
+        for n, r in sorted(risk.items(), key=lambda kv: kv[1], reverse=True):
+            w.writerow([n, f"{r:.6f}", in_deg.get(n, 0), out_deg.get(n, 0), f"{btw.get(n, 0.0):.6f}", str(n in top_set)])
+
+
+# --- Robustluk analizi ---
+def robustness_remove_and_stats(
+    G: nx.DiGraph,
+    remove_nodes: List[str],
+) -> Dict[str, float]:
+    """Belirtilen dugumler kaldirildiktan sonra baglanirlik istatistikleri (zayif)."""
+    H = G.copy()
+    H.remove_nodes_from(remove_nodes)
+    W = H.to_undirected()
+    comps = list(nx.connected_components(W))
+    comp_sizes = sorted([len(c) for c in comps], reverse=True)
+    largest = comp_sizes[0] if comp_sizes else 0
+    stats = {
+        "nodes": float(H.number_of_nodes()),
+        "edges": float(H.number_of_edges()),
+        "components_count": float(len(comps)),
+        "largest_component_size": float(largest),
+    }
+    # En buyuk bilesen icin cap (diameter) hesaplamayi dene
+    try:
+        if comps:
+            giant = W.subgraph(max(comps, key=len)).copy()
+            stats["diameter_lcc"] = float(nx.diameter(giant)) if nx.is_connected(giant) else float("nan")
+        else:
+            stats["diameter_lcc"] = float("nan")
+    except Exception:
+        stats["diameter_lcc"] = float("nan")
+    return stats
 
 
 # Kenar listesini CSV olarak kaydet (source=dependent, target=dependency)
