@@ -6,6 +6,7 @@
 \usepackage{lmodern}
 \usepackage{geometry}
 \usepackage{graphicx}
+\graphicspath{{../results/}}
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{booktabs}
@@ -13,6 +14,13 @@
 \usepackage{hyperref}
 \usepackage{longtable}
 \usepackage{xcolor}
+% Dosya var-yok kontrolünü results/ için de yapacak şekilde sarmalayıcı
+\let\OrigIfFileExists\IfFileExists
+\renewcommand{\IfFileExists}[3]{%
+  \OrigIfFileExists{#1}{#2}{%
+    \OrigIfFileExists{../results/#1}{#2}{#3}%
+  }%
+}
 \geometry{margin=2.5cm}
 \hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
 
@@ -61,54 +69,63 @@ Bu bölümde, results/ dizinindeki çıktıları kullanarak görsel ve tablolu �
 \subsection{Ağ Görselleştirmeleri}
 \begin{figure}[h]
   \centering
-  \IfFileExists{network_full_topN.png}{\includegraphics[width=0.95\linewidth]{../results/network_full_topN.png}}{\fbox{network\_full\_topN.png bulunamadı}}
+  \includegraphics[width=0.95\linewidth]{network_full_topN.png}
+
   \caption{Top N + bağımlılıkların oluşturduğu yönlü ağ (düğüm boyutu: in-degree, renk: Top N turuncu / diğerleri mavi).}
 \end{figure}
 
 \begin{figure}[h]
   \centering
-  \IfFileExists{network_topN_only.png}{\includegraphics[width=0.85\linewidth]{../results/network_topN_only.png}}{\fbox{network\_topN\_only.png bulunamadı}}
+  \includegraphics[width=0.85\linewidth]{network_topN_only.png}
+
   \caption{Sadece Top N düğümlerin indüklenmiş alt-ağı.}
 \end{figure}
 
 \subsection{Derece Dağılımları ve Korelasyonlar}
 \begin{figure}[h]
   \centering
-  \IfFileExists{degree_histograms.png}{\includegraphics[width=0.95\linewidth]{../results/degree_histograms.png}}{\fbox{degree\_histograms.png bulunamadı}}
+  \includegraphics[width=0.95\linewidth]{degree_histograms.png}
+
   \caption{In-Degree ve Out-Degree histogramları (log ölçek).}
 \end{figure}
 
 \begin{figure}[h]
   \centering
-  \IfFileExists{scatter_correlations.png}{\includegraphics[width=0.95\linewidth]{../results/scatter_correlations.png}}{\fbox{scatter\_correlations.png bulunamadı}}
+  \includegraphics[width=0.95\linewidth]{scatter_correlations.png}
+
   \caption{Korelasyonlar: In-Degree vs Betweenness (solda), In-Degree vs Out-Degree (sağda).}
 \end{figure}
 
 \subsection{Liderler (İlk 10)}
 \begin{figure}[h]
   \centering
-  \IfFileExists{top10_leaders.png}{\includegraphics[width=0.95\linewidth]{../results/top10_leaders.png}}{\fbox{top10\_leaders.png bulunamadı}}
+  \includegraphics[width=0.95\linewidth]{top10_leaders.png}
+
   \caption{İlk 10 lider (In/Out-Degree ve Betweenness).}
 \end{figure}
 
 \subsection{Ek Görseller}
 \begin{figure}[h]
   \centering
-  \IfFileExists{top10_in_degree.png}{\includegraphics[width=0.48\linewidth]{../results/top10_in_degree.png}}{\fbox{top10\_in\_degree.png yok}}
-  \IfFileExists{top10_out_degree.png}{\includegraphics[width=0.48\linewidth]{../results/top10_out_degree.png}}{\fbox{top10\_out\_degree.png yok}}
+  \includegraphics[width=0.48\linewidth]{top10_in_degree.png}
+
+  \includegraphics[width=0.48\linewidth]{top10_out_degree.png}
+
   \caption{İlk 10 In-Degree (sol) ve Out-Degree (sağ).}
 \end{figure}
 
 \begin{figure}[h]
   \centering
-  \IfFileExists{top10_betweenness.png}{\includegraphics[width=0.6\linewidth]{../results/top10_betweenness.png}}{\fbox{top10\_betweenness.png yok}}
+  \includegraphics[width=0.6\linewidth]{top10_betweenness.png}
+
   \caption{İlk 10 Betweenness.}
 \end{figure}
 
 \subsection{Risk Skoru ve Robustluk}
 \begin{figure}[h]
   \centering
-  \IfFileExists{top20_risk.png}{\includegraphics[width=0.75\linewidth]{../results/top20_risk.png}}{\fbox{top20\_risk.png bulunamadı}}
+  \includegraphics[width=0.75\linewidth]{top20_risk.png}
+
   \caption{Bileşik risk skoruna göre ilk 20 paket.}
 \end{figure}
 
@@ -126,14 +143,16 @@ Bu bölümde, results/ dizinindeki çıktıları kullanarak görsel ve tablolu �
 Risk liderleri icin hesaplanan basamaklanma etkisi asagidaki gorselde sunulmustur.
 \begin{figure}[h]
   \centering
-  \IfFileExists{cascade_impact_top20.png}{\includegraphics[width=0.75\linewidth]{../results/cascade_impact_top20.png}}{\fbox{cascade\_impact\_top20.png bulunamad\i}}
+  \includegraphics[width=0.75\linewidth]{cascade_impact_top20.png}
+
   \caption{Risk skoruna g\"ore ilk 20 paket i\c{c}in basamaklanma (cascading impact) b\"uy\"ukl\"u\u{g}\u{u}.}
 \end{figure}
 
 \paragraph{Risk--Basamaklanma \c{C}izimi.} Ek olarak, risk skoru ile basamaklanma etkisi aras\i ndaki ili\c{s}ki de g\"ozlemlenmi\c{s}tir.
 \begin{figure}[h]
   \centering
-  \IfFileExists{risk_vs_cascade.png}{\includegraphics[width=0.6\linewidth]{../results/risk_vs_cascade.png}}{\fbox{risk\_vs\_cascade.png bulunamad\i}}
+  \includegraphics[width=0.6\linewidth]{risk_vs_cascade.png}
+
   \caption{Risk skoru ile basamaklanma etkisi aras\i ndaki ili\c{s}ki (scatter).}
 \end{figure}
 
