@@ -15,6 +15,7 @@
 \usepackage{hyperref}
 \usepackage{longtable}
 \usepackage{xcolor}
+\usepackage{microtype}
 \geometry{margin=2.5cm}
 \hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
 \graphicspath{{../results/}}
@@ -48,6 +49,9 @@ Amaç, yazılım tedarik zinciri güvenliğini paket-içi zafiyetlerin ötesine 
 
 \section{Veri ve Yöntem}
 Top~N paket listesi, her çalıştırmada API'lerden çekilir (öncelik ecosyste.ms; yedek olarak npm registry ve npms.io). Bağımlılıklar, npm registry'de paketlerin en güncel sürümlerinin \texttt{dependencies} alanından alınır; isteğe bağlı \texttt{peerDependencies} de eklenebilir. Yönlü ağ, Dependent~$\to$~Dependency yönüyle kurulur. Büyük graflarda betweenness örneklemeli ($k$) hesaplanır.
+
+\section{Ağ Özeti}
+\IfFileExists{../results/graph_stats.tex}{\input{../results/graph_stats.tex}}{\fbox{graph\_stats.tex bulunamadı}}
 
 \section{Ağ Modeli ve Metrikler}
 Model, NetworkX ile kurulmuş bir \texttt{DiGraph} yapısıdır. Temel metrikler: (i) \emph{In-degree:} düğüme gelen kenar sayısı (pakete dayanan paket sayısı); (ii) \emph{Out-degree:} düğümün dış bağımlılık sayısı; (iii) \emph{Betweenness:} en kısa yollardaki aracılık (köprü) rolü.
