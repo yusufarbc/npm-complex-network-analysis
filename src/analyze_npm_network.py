@@ -277,8 +277,15 @@ def main():
     out_dir = Path(args.outdir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
+    # Determine source of package list
+    default_list = Path("data/top_200.txt")
+    src_list: Path | None = None
     if args.input_list:
         src_list = Path(args.input_list)
+    elif default_list.exists():
+        src_list = default_list
+
+    if src_list is not None:
         print(f"Reading package list from {src_list} ...")
         top_packages = read_list(src_list)
         print(f"Loaded {len(top_packages)} package names.")

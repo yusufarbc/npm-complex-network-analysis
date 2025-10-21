@@ -28,10 +28,10 @@ pip install -r requirements.txt
 
 ## Kullanım
 
-Top 200 sabit listesinden ağ ve metrikler:
+Top 200 sabit listesinden ağ ve metrikler (varsayılan):
 
 ```
-python src/analyze_npm_network.py --input-list data/top_200.txt --outdir results
+python src/analyze_npm_network.py --outdir results
 ```
 
 Not defterinden (Jupyter) etkileşimli çalışma:
@@ -51,6 +51,10 @@ python src/analyze_npm_network.py --top 20000 --outdir results --list-only
 - `metrics.csv`: `package,in_degree,betweenness,is_top100`
 - `report.md`: In-degree ve betweenness için kısa sıralamalar (tüm düğümler ve Top‑N kohortu)
 - `top_packages.txt`: Kullanılan Top‑N isimleri (girdi listesinin kopyası)
+
+Varsayılan davranış
+- Eğer `data/top_200.txt` mevcutsa script bu listeyi otomatik kullanır (indirme yapmaz).
+- Aksi halde `--top` ölçüsünde API’lerden liste çekilir.
 
 ## Model Varsayımları ve Sınırlamalar
 
