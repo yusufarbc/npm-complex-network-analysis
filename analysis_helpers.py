@@ -173,11 +173,12 @@ def build_dependency_graph(top_packages: List[str]) -> Tuple[nx.DiGraph, Set[str
     return G, top_set
 
 
-def compute_metrics(G: nx.DiGraph) -> Tuple[Dict[str, int], Dict[str, float]]:
-    """Ağ için in-degree ve betweenness merkeziyet metriklerini hesapla."""
+def compute_metrics(G: nx.DiGraph) -> Tuple[Dict[str, int], Dict[str, int], Dict[str, float]]:
+    """Ağ için in-degree, out-degree ve betweenness merkeziyet metriklerini hesapla."""
     in_deg: Dict[str, int] = dict(G.in_degree())
+    out_deg: Dict[str, int] = dict(G.out_degree())
     btw: Dict[str, float] = nx.betweenness_centrality(G, normalized=True)
-    return in_deg, btw
+    return in_deg, out_deg, btw
 
 
 def save_edges(G: nx.DiGraph, out_path: Path) -> None:
@@ -192,29 +193,40 @@ def save_edges(G: nx.DiGraph, out_path: Path) -> None:
 
 def save_metrics(
     in_deg: Dict[str, int],
+    out_deg: Dict[str, int],
     btw: Dict[str, float],
     top_set: Set[str],
     out_path: Path,
 ) -> None:
-    """Düğüm metriklerini CSV olarak kaydet (paket, in_degree, betweenness, is_top100)."""
+    """Düğüm metriklerini CSV olarak kaydet (paket, in_degree, out_degree, betweenness, is_top100)."""
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with out_path.open("w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
-        w.writerow(["package", "in_degree", "betweenness", "is_top100"])
-        all_nodes = set(in_deg.keys()) | set(btw.keys())
+        w.writerow(["package", "in_degree", "out_degree", "betweenness", "is_top100"])
+        all_nodes = set(in_deg.keys()) | set(out_deg.keys()) | set(btw.keys())
         for n in sorted(all_nodes):
-            w.writerow([n, in_deg.get(n, 0), f"{btw.get(n, 0.0):.6f}", str(n in top_set)])
+            w.writerow([
+                n,
+                in_deg.get(n, 0),
+                out_deg.get(n, 0),
+                f"{btw.get(n, 0.0):.6f}",
+                str(n in top_set),
+            ])
 
 
 def save_report(
-    in_deg: Dict[str, int], btw: Dict[str, float], top_set: Set[str], out_path: Path
+    in_deg: Dict[str, int], out_deg: Dict[str, int], btw: Dict[str, float], top_set: Set[str], out_path: Path
 ) -> None:
-    """Kısa bir Markdown raporu üret ve kaydet (in-degree/betweenness için ilk 20 listeler)."""
+    """Kısa bir Markdown raporu üret ve kaydet (in-degree/out-degree/betweenness için ilk 20 listeler)."""
     out_path.parent.mkdir(parents=True, exist_ok=True)
     top_in_all = sorted(in_deg.items(), key=lambda kv: kv[1], reverse=True)[:20]
+    top_out_all = sorted(out_deg.items(), key=lambda kv: kv[1], reverse=True)[:20]
     top_btw_all = sorted(btw.items(), key=lambda kv: kv[1], reverse=True)[:20]
     top_in_top = sorted(
         ((n, in_deg.get(n, 0)) for n in top_set), key=lambda kv: kv[1], reverse=True
+    )[:20]
+    top_out_top = sorted(
+        ((n, out_deg.get(n, 0)) for n in top_set), key=lambda kv: kv[1], reverse=True
     )[:20]
     top_btw_top = sorted(
         ((n, btw.get(n, 0.0)) for n in top_set), key=lambda kv: kv[1], reverse=True
@@ -227,6 +239,10 @@ def save_report(
     for n, v in top_in_all:
         lines.append(f"- {n}: {v}")
     lines.append("")
+    lines.append("## Out-Degree İlk 20 (Tüm Düğümler)")
+    for n, v in top_out_all:
+        lines.append(f"- {n}: {v}")
+    lines.append("")
     lines.append("## Betweenness İlk 20 (Tüm Düğümler)")
     for n, v in top_btw_all:
         lines.append(f"- {n}: {v:.6f}")
@@ -235,9 +251,12 @@ def save_report(
     for n, v in top_in_top:
         lines.append(f"- {n}: {v}")
     lines.append("")
+    lines.append("## Out-Degree İlk 20 (Top 200 Kohortu)")
+    for n, v in top_out_top:
+        lines.append(f"- {n}: {v}")
+    lines.append("")
     lines.append("## Betweenness İlk 20 (Top 200 Kohortu)")
     for n, v in top_btw_top:
         lines.append(f"- {n}: {v:.6f}")
 
     out_path.write_text("\n".join(lines), encoding="utf-8")
-
