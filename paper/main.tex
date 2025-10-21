@@ -43,6 +43,10 @@ Bu \c{c}al\i\c{s}man\i n temel amac\i, yaz\i l\i m tedarik zinciri g\"uvenli\u{g
 \section{Veri ve Yöntem}
 Top~N paket listesi, her çalıştırmada API'lerden çekilir. Öncelik ecosyste.ms üzerinde indirmeye göre sıralı paket adlarındadır; başarısız durumlarda npm registry araması (popularity) ve npms.io (popülerlik skoru) yedek olarak kullanılır. Bağımlılıklar, npm registry'de paketlerin en güncel sürümlerinin \texttt{dependencies} alanından okunur; isteğe bağlı olarak \texttt{peerDependencies} de dahil edilebilir. Yönlü ağ, Dependent~$\to$~Dependency yönüyle kurulur. Büyük graflarda betweenness merkeziyeti örneklemeli (k) hesaplanır.
 
+
+
+\subsection{Parametreler}
+Varsayilanlar: Top~N=200 (defterde 1000 de denenmistir), \texttt{include\_peer\_deps}=False, betweenness icin \texttt{sample\_k} \emph{otomatik} ($n\leq 1200$ ise tam, aksi halde $k=200$). Risk agirliklari: $w_{in}=0.5$, $w_{out}=0.2$, $w_b=0.3$. Ciktilar \texttt{results/} dizinine yazilir.
 \section{Ağ Modeli ve Metrikler}
 Model, NetworkX ile kurulmuş \texttt{DiGraph} yapısıdır. Temel metrikler:
 \begin{itemize}
@@ -119,7 +123,7 @@ Bu bölümde, results/ dizinindeki çıktıları kullanarak görsel ve tablolu �
 \IfFileExists{../results/risk_scores_top20.tex}{\input{../results/risk_scores_top20.tex}}{\fbox{risk\_scores\_top20.tex bulunamadı}}
 
 \subsection{Basamaklanma (Cascading Impact)}
-Bir d\"u\u{g}\u m\"un ele ge\c{c}irilmesi halinde, ters y\"onde (dependents) ula\c{s}\i labilen d\"u\u{g}\u m say\i s\i o d\"u\u{g}\u m\"un potansiyel etki alan\i n\i g\"osterir. Risk liderleri i\c{c}in hesaplanan basamaklanma etkisi a\c{s}a\u{g}\i daki g\"orsele d\"ok\"ulm\u\c{s}t\u{u}r.
+Risk liderleri icin hesaplanan basamaklanma etkisi asagidaki gorselde sunulmustur.
 \begin{figure}[h]
   \centering
   \IfFileExists{cascade_impact_top20.png}{\includegraphics[width=0.75\linewidth]{../results/cascade_impact_top20.png}}{\fbox{cascade\_impact\_top20.png bulunamad\i}}
@@ -134,6 +138,41 @@ Bir d\"u\u{g}\u m\"un ele ge\c{c}irilmesi halinde, ters y\"onde (dependents) ula
 \end{figure}
 
 
+
+
+\section{Tum Ciktilar ve Dosya Ozeti}
+\subsection{Gorseller (PNG/SVG)}
+Bu calismada uretilen temel gorseller asagidadir; tamam\i results/ dizinindedir.
+\begin{itemize}
+  \item network\_full\_topN.(png|svg): Top N + bagimliliklarin tam agi
+  \item network\_topN\_only.(png|svg): Sadece Top N ind\"uklenmis alt-ag
+  \item degree\_histograms.(png|svg): In/Out-degree histogramlari (log olcek)
+  \item scatter\_correlations.(png|svg): In-Degree vs Betweenness; In-Degree vs Out-Degree
+  \item top10\_in\_degree.(png|svg), top10\_out\_degree.(png|svg), top10\_betweenness.(png|svg), top10\_leaders.(png|svg)
+  \item top20\_risk.(png|svg): Bilesik risk skoruna gore ilk 20
+  \item cascade\_impact\_top20.(png|svg): Basamaklanma etkisi (risk liderleri)
+  \item risk\_vs\_cascade.(png|svg): Risk ile basamaklanma iliskisi (scatter)
+\end{itemize}
+
+\subsection{Veri ve Tablolar}
+Asagidaki dosyalar metrik ve arakatman ciktilarini icerir:
+\begin{longtable}{ll}
+\toprule
+\textbf{Dosya} & \textbf{Aciklama} \\
+\midrule
+\texttt{edges.csv} & Kenar listesi (source=dependent, target=dependency) \\
+\texttt{metrics.csv} & Dugum metrikleri (in/out/between, is\_topN) \\
+\texttt{risk\_scores.csv} & Bilesik risk skorlar\i \\
+\texttt{edge\_betweenness\_top10.csv} & En yuksek edge betweenness 10 kenar \\
+\texttt{robustness\_risk.json} & Risk tabanli kaldirma senaryolari icin baglanirlik \\
+\texttt{graph\_stats.json} & Genel ag istatistikleri (dugum/kenar, bilesen, cap) \\
+\texttt{top\_packages.txt} & Kullanilan Top N paket adlari \\
+\texttt{report.md} & Kisa siralama raporu (ilk 20 listeler) \\
+\texttt{metrics\_top20\_in\_degree.tex} & Top 20 In-Degree (LaTeX tablo) \\
+\texttt{risk\_scores\_top20.tex} & Top 20 Risk Skoru (LaTeX tablo) \\
+\texttt{cache\_deps.json} & Bagimlilik sorgulari icin onbellek \\
+\bottomrule
+\end{longtable}
 \section{Risk Skoru Tanımı}
 Normalize edilmiş metrikler (min‑max) üzerinden ağırlıklandırılmış bir risk skoru tanımlanmıştır:
 \[
