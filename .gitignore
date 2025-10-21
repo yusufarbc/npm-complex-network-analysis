@@ -5,7 +5,6 @@ __pycache__/
 
 # Data outputs
 /data/
-!/data/top_200.txt
 /data_*/
 /data-test*/
 
@@ -22,4 +21,5 @@ Thumbs.db
 
 # Embedded repos
 npm-leaderboard/
+
 
