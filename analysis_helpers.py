@@ -25,6 +25,7 @@ NPM_SEARCH_URL = "https://registry.npmjs.org/-/v1/search"
 NPM_REGISTRY_BASE = "https://registry.npmjs.org"
 
 
+# Bir dosyadan satır bazlı paket adı listesi oku
 def read_list(path: Path) -> List[str]:
     """Bir dosyadan paket isimlerini (satır başına bir isim) oku ve liste döndür."""
     if not path.exists():
@@ -36,6 +37,7 @@ def read_list(path: Path) -> List[str]:
     ]
 
 
+# ecosyste.ms üzerinden tek sayfada (<=1000) Top-N paket adlarını çek
 def _fetch_top_packages_ecosystems(limit: int) -> List[str]:
     """ecosyste.ms paket adlarını tek sayfa (<=1000) şeklinde, indirmeye göre sırayla çek."""
     per_page = min(max(limit, 1), 1000)
@@ -46,6 +48,7 @@ def _fetch_top_packages_ecosystems(limit: int) -> List[str]:
     return names[:limit]
 
 
+# ecosyste.ms üzerinden sayfalayarak (per_page=1000) Top-N paket adlarını topla
 def _fetch_top_packages_ecosystems_paginated(limit: int) -> List[str]:
     """ecosyste.ms üzerinden sayfalayarak limit adede kadar paket adı topla (per_page=1000)."""
     collected: List[str] = []
@@ -75,6 +78,7 @@ def _fetch_top_packages_ecosystems_paginated(limit: int) -> List[str]:
     return deduped
 
 
+# npms.io popülerlik skoruna göre yaklaşık Top-N paket adlarını çek (yedek)
 def _fetch_top_packages_npms(limit: int) -> List[str]:
     """npms.io popülerlik skorunu yaklaşık olarak kullanarak isim listesi çek."""
     params = {"q": "scope:public", "size": min(limit, 250)}
@@ -90,6 +94,7 @@ def _fetch_top_packages_npms(limit: int) -> List[str]:
     return [n for n in names if n][:limit]
 
 
+# Top-N paket adlarını getir (öncelik ecosyste.ms; npm search/npms.io yedek)
 def fetch_top_packages(limit: int = 100) -> List[str]:
     """En çok indirilen Top-N paket adlarını getir (tercihen ecosyste.ms, ardından yedekler)."""
     try:
@@ -126,11 +131,13 @@ def fetch_top_packages(limit: int = 100) -> List[str]:
     return _fetch_top_packages_npms(limit)
 
 
+# NPM paket adını URL için güvenli biçimde kodla (scoped paketler dahil)
 def encode_npm_name(name: str) -> str:
     """NPM paket adını URL yolunda güvenli kullanmak için kodla (scoped paketlerde '/' da kodlanır)."""
     return quote(name, safe="")
 
 
+# Bir paketin en güncel sürümünden dependencies alanını çek
 def fetch_dependencies(package: str) -> Dict[str, str]:
     """Bir paketin npm registry’deki en güncel sürümünden `dependencies` alanını çek."""
     encoded = encode_npm_name(package)
@@ -158,6 +165,7 @@ def fetch_dependencies(package: str) -> Dict[str, str]:
     return deps if isinstance(deps, dict) else {}
 
 
+# Top-N listesinden yönlü bağımlılık ağı kur (Dependent → Dependency)
 def build_dependency_graph(top_packages: List[str]) -> Tuple[nx.DiGraph, Set[str]]:
     """Top-N listesi için yönlü bir bağımlılık ağı (Dependent → Dependency) kur ve döndür."""
     G = nx.DiGraph()
@@ -173,6 +181,7 @@ def build_dependency_graph(top_packages: List[str]) -> Tuple[nx.DiGraph, Set[str
     return G, top_set
 
 
+# Ağ için in-degree, out-degree ve betweenness metriklerini hesapla
 def compute_metrics(G: nx.DiGraph) -> Tuple[Dict[str, int], Dict[str, int], Dict[str, float]]:
     """Ağ için in-degree, out-degree ve betweenness merkeziyet metriklerini hesapla."""
     in_deg: Dict[str, int] = dict(G.in_degree())
@@ -181,6 +190,7 @@ def compute_metrics(G: nx.DiGraph) -> Tuple[Dict[str, int], Dict[str, int], Dict
     return in_deg, out_deg, btw
 
 
+# Kenar listesini CSV olarak kaydet (source=dependent, target=dependency)
 def save_edges(G: nx.DiGraph, out_path: Path) -> None:
     """Kenar listesini CSV olarak kaydet (source=dependent, target=dependency)."""
     out_path.parent.mkdir(parents=True, exist_ok=True)
@@ -191,6 +201,7 @@ def save_edges(G: nx.DiGraph, out_path: Path) -> None:
             w.writerow([u, v])
 
 
+# Düğüm metriklerini CSV olarak kaydet (in_degree, out_degree, betweenness)
 def save_metrics(
     in_deg: Dict[str, int],
     out_deg: Dict[str, int],
@@ -214,6 +225,7 @@ def save_metrics(
             ])
 
 
+# Kısa bir Markdown raporu üret (in/out/between için ilk 20 listeler)
 def save_report(
     in_deg: Dict[str, int], out_deg: Dict[str, int], btw: Dict[str, float], top_set: Set[str], out_path: Path
 ) -> None:
