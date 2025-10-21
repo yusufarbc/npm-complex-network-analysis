@@ -3,82 +3,44 @@
 Bu proje, NPM ekosistemindeki paketleri yönlü bir ağ olarak modelleyip yapısal riski merkeziyet metrikleriyle analiz eder. Hedef, klasik güvenlik metriklerinin (ör. CVSS) ötesine geçerek, bir paketin bağımlılık ağındaki konumundan kaynaklanan sistemik riski görünür kılmaktır.
 
 ## Öz
-
 - Ağ: Yönlü grafik (NetworkX `DiGraph`)
 - Düğüm: NPM paketi
-- Kenar: Bağımlılık ilişkisi
-- Yön: Dependent → Dependency (bağımlı paket → bağımlılık)
-- Metrikler: In-Degree (pakete gelen kenar), Betweenness (en kısa yollardaki aracı rol)
+- Kenar: Bağımlılık ilişkisi (Dependent → Dependency)
+- Metrikler: In-Degree, Out-Degree, Betweenness
 
-## Kaynak ve Kapsam
-
-- Varsayılan örneklem: `data/top_200.txt` içindeki Top 200 paket (downloads’a göre). Bu liste npm‑leaderboard ile aynı veri hattına dayalıdır.
-- Bağımlılıklar: NPM registry’deki en güncel sürümün `dependencies` alanı temel alınır.
-- Not: Varsayılan analiz yalnızca `dependencies` kullanır; `peerDependencies` vb. isteğe bağlı olarak eklenebilir.
+## Kapsam ve Veri
+- Örneklem: Popüler Top N paket (varsayılan 200)
+- Veri: Liste her çalıştırmada API’lerden çekilir (npm registry / ecosyste.ms / npms.io yedekli)
+- Bağımlılıklar: NPM registry’deki en güncel sürümün `dependencies` alanı
 
 ## Kurulum
-
 Önkoşullar: Python 3.10+
-
 ```
 python -m venv .venv
 ./.venv/Scripts/activate  # Windows PowerShell
 pip install -r requirements.txt
 ```
 
-## Kullanım
+## Kullanım (Notebook)
+- `analysis.ipynb` dosyasını açın ve hücreleri sırayla çalıştırın.
+- Liste her çalıştırmada API’lerden çekilir; tüm çıktılar `results/` dizinine kaydedilir.
 
-Top 200 sabit listesinden ağ ve metrikler (varsayılan):
-
-```
-python src/analyze_npm_network.py --outdir results
-```
-
-Not defterinden (Jupyter) etkileşimli çalışma:
-
-1) `analysis.ipynb` dosyasını açın.
-2) Hücreleri sırayla çalıştırın. Varsayılan olarak `data/top_200.txt` varsa onu kullanır; yoksa API’lerden Top‑N çeker.
-
-İsteğe bağlı – Top 20.000 ismi yalnızca liste olarak indir (graf kurmadan):
-
-```
-python src/analyze_npm_network.py --top 20000 --outdir results --list-only
-```
-
-## Üretilen Dosyalar (`--outdir` altında, varsayılan `results/`)
-
+## Üretilen Dosyalar (results/)
 - `edges.csv`: Kenar listesi (source=dependent, target=dependency)
-- `metrics.csv`: `package,in_degree,betweenness,is_top100`
-- `report.md`: In-degree ve betweenness için kısa sıralamalar (tüm düğümler ve Top‑N kohortu)
-- `top_packages.txt`: Kullanılan Top‑N isimleri (girdi listesinin kopyası)
+- `metrics.csv`: `package,in_degree,out_degree,betweenness,is_top100`
+- `report.md`: Kısa sıralamalar (in/out/between; tüm düğümler ve Top N)
+- `top_packages.txt`: Kullanılan Top N isimleri (kopya)
+- Görseller:
+  - `network_full_top200.png/.svg` — Tüm ağ
+  - `network_top200_only.png/.svg` — Sadece Top 200 alt-ağ
+  - `top10_in_degree.png`, `top10_out_degree.png`, `top10_betweenness.png`, `top10_leaders.png`
 
-Varsayılan davranış
-- Eğer `data/top_200.txt` mevcutsa script bu listeyi otomatik kullanır (indirme yapmaz).
-- Aksi halde `--top` ölçüsünde API’lerden liste çekilir.
-
-## Model Varsayımları ve Sınırlamalar
-
-- Kenar yönü Dependent → Dependency olarak modellenmiştir; bu, ele geçirilme senaryolarında etkilenebilecek paketleri takip etmeyi kolaylaştırır.
-- `dependencies` dışındaki alanlar (örn. `peerDependencies`) varsayılan analizde dışarıda tutulur; dahil etmek için betiğe bayrak eklenebilir.
-- Dependent (bağımlı) sayıları, yalnızca kohort içindeki bağlantılar üzerinden in-degree ile gözlemlenir. Tüm ekosistemdeki global bağımlı sayısı için ecosyste.ms API’sinden `dependent_packages_count` metriği ayrıca çekilebilir.
-- En son sürüm baz alınır; ekosistemde yaygın kullanılan eski sürümlerin bağımlılık yapısı farklı olabilir.
-
-## Yol Haritası / Öneriler
-
-- `peerDependencies` desteğini opsiyonel bayrakla ekleme
-- Büyük kohortlar (2k–20k) için yaklaşık betweenness (k-sampling) ve hız sınırlama/yeniden deneme stratejileri
-- GEXF/GraphML dışa aktarma ile Gephi/veya diğer araçlara görselleştirme
+## Varsayımlar ve Sınırlamalar
+- Kenar yönü Dependent → Dependency; yayılım analizi için uygundur.
+- Varsayılan analiz yalnızca `dependencies` alanını içerir; `peerDependencies` isteğe bağlı eklenebilir.
+- Global dependent sayıları dahil değildir; ecosyste.ms’ten eklenebilir.
+- En güncel sürüm kullanılır; eski sürümlerde bağımlılıklar farklı olabilir.
 
 ## Proje Yapısı
-
-- `src/analyze_npm_network.py`: Top‑N’i alır veya dosyadan okur, NetworkX ile grafı kurar, metrikleri hesaplar ve çıktıları üretir.
-- `analysis.ipynb`: Adım adım defter; Top‑N getirme, ağ kurma, metrik hesaplama ve saklama.
-- `data/top_200.txt`: Kanonik Top 200 listesi (sürüm kontrollü). Diğer `data/*` çıktıları git tarafından yok sayılır.
-
-
-
-### Görselleştirme
-- Defter, tüm ağ ve yalnızca Top 200 indüklenmiş alt-ağın çizimini oluşturur.
-- Görseller kaydedilir: 
-  - results/network_full_top200.png (ve .svg)
-  - results/network_top200_only.png (ve .svg)
+- `analysis_helpers.py`: Yardımcı fonksiyonların tamamı (Türkçe açıklamalı)
+- `analysis.ipynb`: Adım adım analiz, görseller ve çıktı üretimi
