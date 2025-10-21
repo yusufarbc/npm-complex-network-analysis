@@ -138,11 +138,15 @@ def encode_npm_name(name: str) -> str:
 
 
 # Bir paketin en güncel sürümünden dependencies alanını çek
-def fetch_dependencies(package: str) -> Dict[str, str]:
-    """Bir paketin npm registry’deki en güncel sürümünden `dependencies` alanını çek."""
+def fetch_dependencies(package: str, session: requests.Session | None = None) -> Dict[str, str]:
+    """Bir paketin npm registry’deki en güncel sürümünden `dependencies` alanını çek.
+
+    Daha verimli olmak için varsa paylaşılan bir `requests.Session` kullanır.
+    """
     encoded = encode_npm_name(package)
     url = f"{NPM_REGISTRY_BASE}/{encoded}"
-    resp = requests.get(url, timeout=60)
+    http = session if session is not None else requests
+    resp = http.get(url, timeout=60)
     if resp.status_code != 200:
         return {}
     data = resp.json()
@@ -167,26 +171,38 @@ def fetch_dependencies(package: str) -> Dict[str, str]:
 
 # Top-N listesinden yönlü bağımlılık ağı kur (Dependent → Dependency)
 def build_dependency_graph(top_packages: List[str]) -> Tuple[nx.DiGraph, Set[str]]:
-    """Top-N listesi için yönlü bir bağımlılık ağı (Dependent → Dependency) kur ve döndür."""
+    """Top-N listesi için yönlü bir bağımlılık ağı (Dependent → Dependency) kur ve döndür.
+
+    Bağlantı maliyetini azaltmak için tek bir HTTP oturumu (Session) yeniden kullanılır.
+    """
     G = nx.DiGraph()
     top_set: Set[str] = set(top_packages)
     for pkg in top_packages:
         G.add_node(pkg)
-    for pkg in top_packages:
-        deps = fetch_dependencies(pkg)
-        for dep in deps.keys():
-            G.add_edge(pkg, dep)  # Dependent → Dependency
-            if dep not in G:
-                G.add_node(dep)
+    with requests.Session() as session:
+        for pkg in top_packages:
+            deps = fetch_dependencies(pkg, session=session)
+            for dep in deps.keys():
+                G.add_edge(pkg, dep)  # Dependent → Dependency
+                if dep not in G:
+                    G.add_node(dep)
     return G, top_set
 
 
 # Ağ için in-degree, out-degree ve betweenness metriklerini hesapla
 def compute_metrics(G: nx.DiGraph) -> Tuple[Dict[str, int], Dict[str, int], Dict[str, float]]:
-    """Ağ için in-degree, out-degree ve betweenness merkeziyet metriklerini hesapla."""
+    """Ağ için in-degree, out-degree ve betweenness merkeziyet metriklerini hesapla.
+
+    Büyük graf’larda (örn. >1200 düğüm) betweenness için örnekleme (k) kullanarak hesaplamayı hızlandırır.
+    """
     in_deg: Dict[str, int] = dict(G.in_degree())
     out_deg: Dict[str, int] = dict(G.out_degree())
-    btw: Dict[str, float] = nx.betweenness_centrality(G, normalized=True)
+    n = G.number_of_nodes()
+    if n > 1200:
+        k = min(200, n)
+        btw: Dict[str, float] = nx.betweenness_centrality(G, k=k, normalized=True, seed=42)
+    else:
+        btw = nx.betweenness_centrality(G, normalized=True)
     return in_deg, out_deg, btw
 
 
