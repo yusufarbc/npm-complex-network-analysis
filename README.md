@@ -5,9 +5,8 @@ Bu proje, NPM ekosistemindeki paketleri yönlü bir ağ olarak modelleyip yapıs
 ## Sunum (index.html)
 - Kök dizindeki `index.html`, `results/` altındaki görselleri ve dosyaları açıklamalarıyla birlikte sunar.
 - Ayrıntılı açıklamalar `paper/main.tex` ile uyumludur; tam metin için `paper/main.pdf`.
-- Not: Depoda `.gitignore` varsayılan olarak `results/` klasörünü dışlar. Uzak depoda sonuçları göstermek istiyorsanız bu klasörü geçici olarak dahil edebilir (`git add -f results/...`) ya da ayrı bir yayın klasörü (örn. `docs/`) kullanabilirsiniz.
 
-- https://yusufarbc.github.io/npm-complex-network-analysis/
+- Canlı önizleme: https://yusufarbc.github.io/npm-complex-network-analysis/
 
 ## Öz
 - Ağ: Yönlü grafik (NetworkX `DiGraph`)
@@ -36,7 +35,6 @@ pip install -r requirements.txt
 - `edges.csv`: Kenar listesi (source=dependent, target=dependency)
 - `metrics.csv`: `package,in_degree,out_degree,betweenness,is_topN`
 - `risk_scores.csv`: Bileşik risk skorları ve ilgili metrikler
-- `report.md`: Kısa sıralamalar (in/out/between; tüm düğümler ve Top N)
 - `top_packages.txt`: Kullanılan Top N isimleri (kopya)
 - Görseller:
   - `network_full_topN.png/.svg` — Tüm ağ
@@ -53,8 +51,8 @@ pip install -r requirements.txt
 - En güncel sürüm kullanılır; eski sürümlerde bağımlılıklar farklı olabilir.
 
 ## Proje Yapısı
-- `analysis_helpers.py`: Yardımcı fonksiyonlar (Türkçe açıklamalı)
+- `analysis_helpers.py`: Yardımcı fonksiyonlar
 - `analysis.ipynb`: Adım adım analiz, görseller ve çıktı üretimi
-- `tools/make_tables.py`: Sonuç CSV’lerinden LaTeX tablo üretimi
+- `tools/make_tables.py`: Sonuç CSV'lerinden LaTeX tablo üretimi
 - `paper/`: LaTeX makale kaynağı ve PDF
 

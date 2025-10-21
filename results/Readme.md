@@ -1,0 +1,133 @@
+# NPM Bagimlilik Agi Raporu
+
+## In-Degree Ilk 20 (Tum Dugumler)
+- tslib: 62
+- @babel/helper-plugin-utils: 58
+- @smithy/types: 48
+- call-bound: 38
+- es-errors: 28
+- call-bind: 24
+- chalk: 23
+- @types/node: 23
+- @jest/types: 23
+- debug: 21
+- jest-util: 20
+- @aws-sdk/types: 20
+- @babel/types: 18
+- graceful-fs: 18
+- define-properties: 18
+- get-intrinsic: 17
+- gopd: 15
+- es-object-atoms: 15
+- semver: 14
+- @smithy/protocol-http: 14
+
+## Out-Degree Ilk 20 (Tum Dugumler)
+- @babel/preset-env: 70
+- es-abstract: 54
+- @aws-sdk/client-sso: 38
+- eslint: 34
+- @jest/core: 28
+- express: 27
+- webpack: 25
+- jest-config: 24
+- @jest/reporters: 23
+- jest-runtime: 22
+- jest-runner: 22
+- jest-snapshot: 21
+- jsdom: 20
+- jest-circus: 20
+- eslint-plugin-import: 19
+- eslint-plugin-react: 18
+- @babel/core: 15
+- @jest/transform: 15
+- babel-preset-current-node-syntax: 15
+- @aws-sdk/credential-provider-ini: 13
+
+## Betweenness Ilk 20 (Tum Dugumler)
+- es-abstract: 0.000785
+- jest-snapshot: 0.000532
+- @jest/transform: 0.000419
+- get-intrinsic: 0.000328
+- @babel/core: 0.000324
+- glob: 0.000301
+- @babel/traverse: 0.000280
+- babel-plugin-istanbul: 0.000260
+- @jest/core: 0.000238
+- reflect.getprototypeof: 0.000211
+- @jest/types: 0.000207
+- call-bound: 0.000183
+- jest-message-util: 0.000178
+- @babel/helper-compilation-targets: 0.000176
+- jest-haste-map: 0.000156
+- babel-preset-current-node-syntax: 0.000151
+- @babel/generator: 0.000139
+- which-builtin-type: 0.000134
+- browserslist: 0.000133
+- jackspeak: 0.000132
+
+## In-Degree Ilk 20 (Top N Kohortu)
+- tslib: 62
+- @babel/helper-plugin-utils: 58
+- @smithy/types: 48
+- call-bound: 38
+- es-errors: 28
+- call-bind: 24
+- @types/node: 23
+- chalk: 23
+- @jest/types: 23
+- debug: 21
+- jest-util: 20
+- @aws-sdk/types: 20
+- define-properties: 18
+- @babel/types: 18
+- graceful-fs: 18
+- get-intrinsic: 17
+- gopd: 15
+- es-object-atoms: 15
+- @smithy/protocol-http: 14
+- semver: 14
+
+## Out-Degree Ilk 20 (Top N Kohortu)
+- @babel/preset-env: 70
+- es-abstract: 54
+- @aws-sdk/client-sso: 38
+- eslint: 34
+- @jest/core: 28
+- express: 27
+- webpack: 25
+- jest-config: 24
+- @jest/reporters: 23
+- jest-runner: 22
+- jest-runtime: 22
+- jest-snapshot: 21
+- jest-circus: 20
+- jsdom: 20
+- eslint-plugin-import: 19
+- eslint-plugin-react: 18
+- babel-preset-current-node-syntax: 15
+- @babel/core: 15
+- @jest/transform: 15
+- @aws-sdk/core: 13
+
+## Betweenness Ilk 20 (Top N Kohortu)
+- es-abstract: 0.000785
+- jest-snapshot: 0.000532
+- @jest/transform: 0.000419
+- get-intrinsic: 0.000328
+- @babel/core: 0.000324
+- glob: 0.000301
+- @babel/traverse: 0.000280
+- babel-plugin-istanbul: 0.000260
+- @jest/core: 0.000238
+- reflect.getprototypeof: 0.000211
+- @jest/types: 0.000207
+- call-bound: 0.000183
+- jest-message-util: 0.000178
+- @babel/helper-compilation-targets: 0.000176
+- jest-haste-map: 0.000156
+- babel-preset-current-node-syntax: 0.000151
+- @babel/generator: 0.000139
+- which-builtin-type: 0.000134
+- browserslist: 0.000133
+- jackspeak: 0.000132
