@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NPM Karmaşık Ağ Analizi — Sonuç Sunumu</title>
+    <style>
+      :root {
+        --bg: #0f172a;
+        --panel: #111827;
+        --panel-2: #0b1220;
+        --text: #e5e7eb;
+        --muted: #9ca3af;
+        --accent: #7c3aed;
+        --accent-2: #22c55e;
+        --border: #1f2937;
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font: 16px/1.55 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+      a { color: #93c5fd; text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      .wrap { max-width: 1100px; margin: 0 auto; padding: 32px 20px 60px; }
+      header { margin-bottom: 20px; }
+      h1 { font-size: 28px; margin: 0 0 6px; letter-spacing: 0.2px; }
+      .tag { display: inline-block; font-size: 12px; color: var(--muted); background: var(--panel); border: 1px solid var(--border); border-radius: 999px; padding: 2px 10px; margin-right: 8px; }
+      .lead { margin: 14px 0 10px; color: var(--muted); }
+
+      .hero {
+        background: linear-gradient(140deg, rgba(124,58,237,0.2), rgba(34,197,94,0.1));
+        border: 1px solid var(--border);
+        border-radius: 14px; padding: 16px 18px; margin: 22px 0 28px;
+      }
+      .hero strong { color: #fff; }
+
+      h2 { font-size: 20px; margin: 26px 0 12px; }
+      h3 { font-size: 16px; margin: 16px 0 10px; color: var(--muted); font-weight: 600; }
+
+      .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+      .card { background: linear-gradient(180deg, var(--panel), var(--panel-2)); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; }
+      .card-header { padding: 12px 14px; border-bottom: 1px solid var(--border); font-weight: 600; color: #fff; display: flex; align-items: center; gap: 8px; }
+      .card-body { padding: 12px 14px; color: var(--muted); }
+      .card-body p { margin: 0 0 10px; }
+      .art { background: #0a0f1c; padding: 8px; border-top: 1px solid var(--border); }
+      .art img, .art svg, .art picture { display: block; width: 100%; height: auto; border-radius: 8px; }
+      .links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+      .chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; background: #0e1627; border: 1px solid var(--border); color: var(--text); font-size: 12px; }
+      .chip b { color: var(--accent-2); font-weight: 600; }
+      .muted { color: var(--muted); }
+      .kicker { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+      .section { margin-top: 24px; }
+      .footnote { font-size: 12px; color: var(--muted); margin-top: 10px; }
+      .inline { display: inline; }
+      .small { font-size: 13px; }
+      .list { background: linear-gradient(180deg, var(--panel), var(--panel-2)); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
+      .list ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+      .list li { display: flex; justify-content: space-between; gap: 8px; }
+      .list code { color: #bfdbfe; }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <span class="tag">NPM</span>
+        <span class="tag">Karmaşık Ağ</span>
+        <span class="tag">Yapısal Risk</span>
+        <h1>NPM Ekosisteminde Yönlü Karmaşık Ağ Analizi</h1>
+        <div class="lead">Merkeziyet metrikleri ve bileşik risk skorlarıyla paketlerin yapısal riskini nicel inceleme.</div>
+      </header>
+
+      <section class="hero">
+        <div class="kicker">Çalışmanın Özeti</div>
+        <p><strong>Konu:</strong> Yazılım tedarik zinciri saldırıları (SSCA) bağlamında, NPM ekosistemindeki paketlerin yapısal riskini ağ bilimi kullanarak incelemek.</p>
+        <p><strong>Amaç:</strong> Klasik güvenlik değerlendirmelerinin (CVSS vb.) ötesine geçip, bir paketin bağımlılık ağı içindeki konumu üzerinden sistemik riskini ölçmek.</p>
+        <p><strong>Özgün Katkı:</strong> NPM paketlerini yönlü bir karmaşık ağ olarak modelleyip; ele geçirilme durumunda oluşacak basamaklanma etkisini ve merkeziyet metrikleri (in-degree, betweenness) ile öngörülen sistemik riski nicel olarak sunmak.</p>
+      </section>
+
+      <section class="section">
+        <h2>Rehber ve Kapsam</h2>
+        <div class="list small">
+          <ul>
+            <li><span>Model</span><span class="muted">Yönlü ağ (Dependent → Dependency), NetworkX DiGraph</span></li>
+            <li><span>Metrikler</span><span class="muted">In-Degree, Out-Degree, Betweenness; min–max ile bileşik risk</span></li>
+            <li><span>Veri Kaynağı</span><span class="muted">ecosyste.ms (öncelik), npm registry ve npms.io (yedek)</span></li>
+            <li><span>Çoğaltılabilirlik</span><span class="muted">Tüm çıktılar <code>results/</code>, makale <code>paper/main.pdf</code></span></li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Ağ Görselleştirmeleri</h2>
+
+        <div class="grid">
+          <div class="card">
+            <div class="card-header">Tüm Ağ — Top N + Bağımlılıklar</div>
+            <div class="art">
+              <picture>
+                <source type="image/svg+xml" srcset="results/network_full_topN.svg" />
+                <img src="results/network_full_topN.png" alt="Top N + bağımlılıklar ile yönlü ağ görselleştirmesi" loading="lazy" />
+              </picture>
+            </div>
+            <div class="card-body">
+              <p>Düğümler NPM paketlerini, kenarlar bağımlılık yönünü (Dependent → Dependency) gösterir. Düğüm boyutu in-degree ile orantılıdır; Top N turuncu, diğerleri mavidir.</p>
+              <div class="links">
+                <a class="chip" href="results/network_full_topN.svg" download><b>SVG</b> indir</a>
+                <a class="chip" href="results/network_full_topN.png" download><b>PNG</b> indir</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">Top N İndüklenmiş Alt-Ağ</div>
+            <div class="art">
+              <picture>
+                <source type="image/svg+xml" srcset="results/network_topN_only.svg" />
+                <img src="results/network_topN_only.png" alt="Sadece Top N düğümlerin indüklediği alt-ağ" loading="lazy" />
+              </picture>
+            </div>
+            <div class="card-body">
+              <p>Sadece Top N paketlerin birbirleriyle ilişkilerini vurgular. Çekirdek kümeleşmeleri ve köprü paketleri ayırt etmeye yardımcıdır.</p>
+              <div class="links">
+                <a class="chip" href="results/network_topN_only.svg" download><b>SVG</b> indir</a>
+                <a class="chip" href="results/network_topN_only.png" download><b>PNG</b> indir</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Derece Dağılımları ve Korelasyonlar</h2>
+        <div class="grid">
+          <div class="card">
+            <div class="card-header">Derece Histogramları</div>
+            <div class="art">
+              <picture>
+                <source type="image/svg+xml" srcset="results/degree_histograms.svg" />
+                <img src="results/degree_histograms.png" alt="In-degree ve out-degree histogramları (log ölçek)" loading="lazy" />
+              </picture>
+            </div>
+            <div class="card-body">
+              <p>In-degree ve out-degree dağılımlarının log-ölçekte görünümü; ağır kuyruk ve omurga paket yoğunluğunu gösterir.</p>
+              <div class="links">
+                <a class="chip" href="results/degree_histograms.svg" download><b>SVG</b> indir</a>
+                <a class="chip" href="results/degree_histograms.png" download><b>PNG</b> indir</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">Korelasyon Saçılımı</div>
+            <div class="art">
+              <picture>
+                <source type="image/svg+xml" srcset="results/scatter_correlations.svg" />
+                <img src="results/scatter_correlations.png" alt="In-degree vs Betweenness ve In-degree vs Out-degree korelasyonları" loading="lazy" />
+              </picture>
+            </div>
+            <div class="card-body">
+              <p>Sol: In-degree ↔ Betweenness; Sağ: In-degree ↔ Out-degree. Köprü rolü taşıyan ve yüksek risk potansiyeli olan paketleri işaretler.</p>
+              <div class="links">
+                <a class="chip" href="results/scatter_correlations.svg" download><b>SVG</b> indir</a>
+                <a class="chip" href="results/scatter_correlations.png" download><b>PNG</b> indir</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Liderler ve İlk 10 Listeleri</h2>
+        <div class="grid">
+          <div class="card">
+            <div class="card-header">Top 10 Lider (Bileşik)</div>
+            <div class="art">
+              <picture>
+                <source type="image/svg+xml" srcset="results/top10_leaders.svg" />
+                <img src="results/top10_leaders.png" alt="In/Out-degree ve Betweenness bir arada: Top 10 lider" loading="lazy" />
+              </picture>
+            </div>
+            <div class="card-body">
+              <p>In/Out-degree ve Betweenness metriklerini birlikte değerlendirerek genel yapısal liderliği özetler.</p>
+              <div class="links">
+                <a class="chip" href="results/top10_leaders.svg" download><b>SVG</b> indir</a>
+                <a class="chip" href="results/top10_leaders.png" download><b>PNG</b> indir</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">Top 10 In-Degree</div>
+            <div class="art">
+              <picture>
+                <source type="image/svg+xml" srcset="results/top10_in_degree.svg" />
+                <img src="results/top10_in_degree.png" alt="In-degree açısından ilk 10 paket" loading="lazy" />
+              </picture>
+            </div>
+            <div class="card-body">
+              <p>Bağımlı sayısı yüksek olan düğümler; ele geçirilme durumunda potansiyel etki alanı geniştir.</p>
+              <div class="links">
+                <a class="chip" href="results/top10_in_degree.svg" download><b>SVG</b> indir</a>
+                <a class="chip" href="results/top10_in_degree.png" download><b>PNG</b> indir</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">Top 10 Out-Degree</div>
+            <div class="art">
+              <picture>
+                <source type="image/svg+xml" srcset="results/top10_out_degree.svg" />
+                <img src="results/top10_out_degree.png" alt="Out-degree açısından ilk 10 paket" loading="lazy" />
+              </picture>
+            </div>
+            <div class="card-body">
+              <p>Dış bağımlılık sayısı yüksek paketler; bağımlılık zinciri karmaşıklığını gösterir.</p>
+              <div class="links">
+                <a class="chip" href="results/top10_out_degree.svg" download><b>SVG</b> indir</a>
+                <a class="chip" href="results/top10_out_degree.png" download><b>PNG</b> indir</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">Top 10 Betweenness</div>
+            <div class="art">
+              <picture>
+                <source type="image/svg+xml" srcset="results/top10_betweenness.svg" />
+                <img src="results/top10_betweenness.png" alt="Betweenness açısından ilk 10 paket" loading="lazy" />
+              </picture>
+            </div>
+            <div class="card-body">
+              <p>En kısa yollarda köprü görevi gören düğümler; tek hata noktası olma potansiyeli yüksektir.</p>
+              <div class="links">
+                <a class="chip" href="results/top10_betweenness.svg" download><b>SVG</b> indir</a>
+                <a class="chip" href="results/top10_betweenness.png" download><b>PNG</b> indir</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Risk Skoru ve Robustluk</h2>
+        <div class="grid">
+          <div class="card">
+            <div class="card-header">Top 20 Risk Skoru</div>
+            <div class="art">
+              <picture>
+                <source type="image/svg+xml" srcset="results/top20_risk.svg" />
+                <img src="results/top20_risk.png" alt="Bileşik risk skoruna göre ilk 20 paket" loading="lazy" />
+              </picture>
+            </div>
+            <div class="card-body">
+              <p>In/Out-degree ve betweenness’in min–max normalizasyonu ve ağırlıklı toplamıyla elde edilen risk skoru sıralaması.</p>
+              <div class="links">
+                <a class="chip" href="results/top20_risk.svg" download><b>SVG</b> indir</a>
+                <a class="chip" href="results/top20_risk.png" download><b>PNG</b> indir</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">Robustluk İstatistikleri</div>
+            <div class="card-body">
+              <p><code>results/robustness_risk.json</code> dosyası, risk skoruna göre en kritik <code>k ∈ {1,3,5}</code> düğüm çıkarıldığında bağlanırlık ölçümlerini (bileşen sayısı, en büyük bileşen boyutu, mümkünse çap) özetler.</p>
+              <div class="links">
+                <a class="chip" href="results/robustness_risk.json" download><b>JSON</b> indir</a>
+              </div>
+              <div class="footnote">Ayrıntılı tanım için: paper/main.tex içindeki “Robustluk Analizi” bölümü.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Tablolar</h2>
+        <div class="grid">
+          <div class="card">
+            <div class="card-header">Top 20 In-Degree (Tüm Düğümler)</div>
+            <div class="card-body">
+              <p>Yüksek in-degree değerine sahip düğümler; sistemik bulaşma potansiyeli yüksek çekirdek bağımlılıklar.</p>
+              <div class="links">
+                <a class="chip" href="results/metrics_top20_in_degree.tex" download><b>LaTeX</b> indir</a>
+              </div>
+              <div class="footnote">Kaynak: paper/main.tex “Ek Tablolar” ve araç: tools/make_tables.py</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">Top 20 Risk Skoru</div>
+            <div class="card-body">
+              <p>Bileşik risk skoru tablosu; metrikler ve Top N etiketi ile beraber.</p>
+              <div class="links">
+                <a class="chip" href="results/risk_scores_top20.tex" download><b>LaTeX</b> indir</a>
+              </div>
+              <div class="footnote">Detaylar için: paper/main.tex “Risk Skoru Tanımı”.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Veri Dosyaları</h2>
+        <div class="list small">
+          <ul>
+            <li><span><code>results/edges.csv</code></span><span class="muted">Bağımlılık kenar listesi (source=dependent, target=dependency)</span></li>
+            <li><span><code>results/metrics.csv</code></span><span class="muted">Düğüm metrikleri: in_degree, out_degree, betweenness, is_topN</span></li>
+            <li><span><code>results/risk_scores.csv</code></span><span class="muted">Bileşik risk skorları ve ilgili metrikler</span></li>
+            <li><span><code>results/edge_betweenness_top10.csv</code></span><span class="muted">En yüksek edge betweenness’e sahip 10 kenar</span></li>
+            <li><span><code>results/graph_stats.json</code></span><span class="muted">Özet ağ istatistikleri</span></li>
+            <li><span><code>results/robustness_risk.json</code></span><span class="muted">Risk temelli çıkarım sonrası bağlanırlık</span></li>
+            <li><span><code>results/top_packages.txt</code></span><span class="muted">Kullanılan Top N paket adları</span></li>
+            <li><span><code>results/report.md</code></span><span class="muted">Kısa sıralama raporu (ilk 20 listeler)</span></li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Makale ve Kaynaklar</h2>
+        <div class="grid">
+          <div class="card">
+            <div class="card-header">PDF Makale</div>
+            <div class="card-body">
+              <p>Çalışmanın tam metni ve görsel açıklamalar: <code>paper/main.pdf</code>. LaTeX kaynağı için <code>paper/main.tex</code>.</p>
+              <div class="links">
+                <a class="chip" href="paper/main.pdf"><b>PDF</b> görüntüle</a>
+                <a class="chip" href="paper/main.tex"><b>LaTeX</b> kaynağı</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">Tekrarlanabilirlik</div>
+            <div class="card-body">
+              <p><code>analysis.ipynb</code> defteri ile veriler yeniden çekilip görseller üretilebilir; çıktıların tamamı <code>results/</code> altına yazılır. Tablo üretimi için <code>tools/make_tables.py</code>.</p>
+              <div class="links">
+                <a class="chip" href="analysis.ipynb"><b>Notebook</b></a>
+                <a class="chip" href="tools/make_tables.py"><b>Araç</b></a>
+              </div>
+              <div class="footnote">Not: Depoda <code>.gitignore</code> sonuç klasörünü dışlayacak şekilde ayarlı olabilir. Uzakta görüntülemek için sonuçları ayrı bir yayın klasörüne aktarmayı düşünebilirsiniz.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </body>
+  </html>
+
