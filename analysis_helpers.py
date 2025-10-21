@@ -229,7 +229,7 @@ def save_metrics(
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with out_path.open("w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
-        w.writerow(["package", "in_degree", "out_degree", "betweenness", "is_top100"])
+        w.writerow(["package", "in_degree", "out_degree", "betweenness", "is_topN"])
         all_nodes = set(in_deg.keys()) | set(out_deg.keys()) | set(btw.keys())
         for n in sorted(all_nodes):
             w.writerow([
@@ -275,15 +275,15 @@ def save_report(
     for n, v in top_btw_all:
         lines.append(f"- {n}: {v:.6f}")
     lines.append("")
-    lines.append("## In-Degree İlk 20 (Top 200 Kohortu)")
+    lines.append("## In-Degree İlk 20 (Top N Kohortu)")
     for n, v in top_in_top:
         lines.append(f"- {n}: {v}")
     lines.append("")
-    lines.append("## Out-Degree İlk 20 (Top 200 Kohortu)")
+    lines.append("## Out-Degree İlk 20 (Top N Kohortu)")
     for n, v in top_out_top:
         lines.append(f"- {n}: {v}")
     lines.append("")
-    lines.append("## Betweenness İlk 20 (Top 200 Kohortu)")
+    lines.append("## Betweenness İlk 20 (Top N Kohortu)")
     for n, v in top_btw_top:
         lines.append(f"- {n}: {v:.6f}")
 
