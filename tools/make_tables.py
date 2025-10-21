@@ -2,6 +2,27 @@ import csv
 from pathlib import Path
 
 
+def _lt_begin(f, caption: str, cols: str, header_line: str) -> None:
+    f.write('\\begin{longtable}{' + cols + '}' + '\n')
+    f.write('\\caption{' + caption + '}\\\\' + '\n')
+    f.write('\\toprule' + '\n')
+    f.write(header_line + ' \\\\' + '\n')
+    f.write('\\midrule' + '\n')
+    f.write('\\endfirsthead' + '\n')
+    f.write('\\toprule' + '\n')
+    f.write(header_line + ' \\\\' + '\n')
+    f.write('\\midrule' + '\n')
+    f.write('\\endhead' + '\n')
+    f.write('\\bottomrule' + '\n')
+    f.write('\\endfoot' + '\n')
+    f.write('\\bottomrule' + '\n')
+    f.write('\\endlastfoot' + '\n')
+
+
+def _lt_end(f) -> None:
+    f.write('\\end{longtable}' + '\n')
+
+
 def write_metrics_top20_in(res: Path) -> bool:
     mfile = res / 'metrics.csv'
     if not mfile.exists():
@@ -17,18 +38,15 @@ def write_metrics_top20_in(res: Path) -> bool:
     top = rows[:20]
     tex = res / 'metrics_top20_in_degree.tex'
     with tex.open('w', encoding='utf-8') as f:
-        f.write('\\begin{table}[h]\n\\centering\n')
-        f.write('\\\\\\caption{Top 20 In-Degree (Toplam Düğümler)}\n')
-        f.write('\\begin{tabular}{lrrrr}\n\\toprule\n')
-        f.write('Paket & In-Degree & Out-Degree & Betweenness & TopN? \\\\ \\midrule\n')
+        _lt_begin(f, 'Top 20 In-Degree (Toplam Dugumler)', 'lrrrr', 'Paket & In-Degree & Out-Degree & Betweenness & TopN?')
         for r in top:
             pkg = (r.get('package','') or '').replace('&','\\&')
             indeg = r.get('in_degree', 0)
             outdeg = r.get('out_degree','0')
             btw = r.get('betweenness','0.000000')
             istop = r.get('is_topN', r.get('is_top100','False'))
-            f.write(f"{pkg} & {indeg} & {outdeg} & {btw} & {istop} \\\\\n")
-        f.write('\\bottomrule\n\\end{tabular}\n\\end{table}\n')
+            f.write(f"{pkg} & {indeg} & {outdeg} & {btw} & {istop} \\\\" + "\n")
+        _lt_end(f)
     return True
 
 
@@ -47,10 +65,7 @@ def write_risk_top20(res: Path) -> bool:
     top = rows[:20]
     tex = res / 'risk_scores_top20.tex'
     with tex.open('w', encoding='utf-8') as f:
-        f.write('\\begin{table}[h]\n\\centering\n')
-        f.write('\\caption{Top 20 Risk Skoru}\n')
-        f.write('\\begin{tabular}{lrrrrr}\n\\toprule\n')
-        f.write('Paket & Risk & In-Degree & Out-Degree & Betweenness & TopN? \\\\ \\midrule\n')
+        _lt_begin(f, 'Top 20 Risk Skoru', 'lrrrrr', 'Paket & Risk & In-Degree & Out-Degree & Betweenness & TopN?')
         for r in top:
             pkg = (r.get('package','') or '').replace('&','\\&')
             risk = f"{float(r.get('risk_score',0)):.6f}"
@@ -58,23 +73,17 @@ def write_risk_top20(res: Path) -> bool:
             outdeg = r.get('out_degree','0')
             btw = r.get('betweenness','0.000000')
             istop = r.get('is_topN','False')
-            f.write(f"{pkg} & {risk} & {indeg} & {outdeg} & {btw} & {istop} \\\\\n")
-        f.write('\\bottomrule\n\\end{tabular}\n\\end{table}\n')
+            f.write(f"{pkg} & {risk} & {indeg} & {outdeg} & {btw} & {istop} \\\\" + "\n")
+        _lt_end(f)
     return True
 
 
 def write_edge_betweenness_top10(res: Path) -> bool:
-    """Create LaTeX table for the top-10 edges by edge betweenness.
-
-    Expects results/edge_betweenness_top10.csv with headers: u,v,edge_betweenness
-    """
     p = res / 'edge_betweenness_top10.csv'
     if not p.exists():
         return False
-    import csv
     with p.open(encoding='utf-8') as f:
         rows = list(csv.DictReader(f))
-    # Normalize and sort
     norm = []
     for r in rows:
         try:
@@ -87,22 +96,17 @@ def write_edge_betweenness_top10(res: Path) -> bool:
     norm.sort(key=lambda t: t[2], reverse=True)
     tex = res / 'edge_betweenness_top10.tex'
     with tex.open('w', encoding='utf-8') as f:
-        f.write('\\begin{table}[h]\n\\centering\n')
-        f.write('\\caption{Edge Betweenness Ilk 10 (Y\"uksek kopru kenarlar)}\n')
-        f.write('\\begin{tabular}{l l r}\n\\toprule\n')
-        f.write('U & V & Edge Betweenness \\\\ \\midrule\n')
+        _lt_begin(f, 'Edge Betweenness Ilk 10 (Yuksek kopru kenarlar)', 'l l r', 'U & V & Edge Betweenness')
         for u,v,eb in norm[:10]:
-            f.write(f"{u} & {v} & {eb:.6f} \\\n")
-        f.write('\\bottomrule\n\\end{tabular}\n\\end{table}\n')
+            f.write(f"{u} & {v} & {eb:.6f} \\\\" + "\n")
+        _lt_end(f)
     return True
 
 
 def write_cascade_impact_top20(res: Path) -> bool:
-    """Create LaTeX table for cascading impact top20 (package, impacted_count)."""
     p = res / 'cascade_impact_top20.csv'
     if not p.exists():
         return False
-    import csv
     with p.open(encoding='utf-8') as f:
         rows = list(csv.DictReader(f))
     norm = []
@@ -116,22 +120,17 @@ def write_cascade_impact_top20(res: Path) -> bool:
     norm.sort(key=lambda t: t[1], reverse=True)
     tex = res / 'cascade_impact_top20.tex'
     with tex.open('w', encoding='utf-8') as f:
-        f.write('\\begin{table}[h]\n\\centering\n')
-        f.write('\\caption{Basamaklanma Etkisi: Top 20 (Ters y\"onde etkilenebilecek paket say\i s\i)}\n')
-        f.write('\\begin{tabular}{l r}\n\\toprule\n')
-        f.write('Paket & Etkilenen Paket Say\i s\i \\\\ \\midrule\n')
+        _lt_begin(f, 'Basamaklanma Etkisi: Top 20 (Ters yonde etkilenebilecek paket sayisi)', 'l r', 'Paket & Etkilenen Paket Sayisi')
         for name, cnt in norm[:20]:
-            f.write(f"{name} & {cnt} \\\n")
-        f.write('\\bottomrule\n\\end{tabular}\n\\end{table}\n')
+            f.write(f"{name} & {cnt} \\\\" + "\n")
+        _lt_end(f)
     return True
 
 
 def write_metrics_top20_out(res: Path) -> bool:
-    """Create LaTeX table for Top 20 by out_degree from metrics.csv."""
     mfile = res / 'metrics.csv'
     if not mfile.exists():
         return False
-    import csv
     with mfile.open(encoding='utf-8') as f:
         rows = list(csv.DictReader(f))
     for r in rows:
@@ -143,27 +142,22 @@ def write_metrics_top20_out(res: Path) -> bool:
     top = rows[:20]
     tex = res / 'metrics_top20_out_degree.tex'
     with tex.open('w', encoding='utf-8') as f:
-        f.write('\\begin{table}[h]\n\\centering\n')
-        f.write('\\caption{Top 20 Out-Degree (Toplam D\\"ug\\"umler)}\n')
-        f.write('\\begin{tabular}{lrrrr}\n\\toprule\n')
-        f.write('Paket & Out-Degree & In-Degree & Betweenness & TopN? \\\\ \\midrule\n')
+        _lt_begin(f, 'Top 20 Out-Degree (Toplam Dugumler)', 'lrrrr', 'Paket & Out-Degree & In-Degree & Betweenness & TopN?')
         for r in top:
             pkg = (r.get('package','') or '').replace('&','\\&')
             outdeg = r.get('out_degree', 0)
             indeg = r.get('in_degree','0')
             btw = r.get('betweenness','0.000000')
             istop = r.get('is_topN', r.get('is_top100','False'))
-            f.write(f"{pkg} & {outdeg} & {indeg} & {btw} & {istop} \\\n")
-        f.write('\\bottomrule\n\\end{tabular}\n\\end{table}\n')
+            f.write(f"{pkg} & {outdeg} & {indeg} & {btw} & {istop} \\\\" + "\n")
+        _lt_end(f)
     return True
 
 
 def write_metrics_top20_betweenness(res: Path) -> bool:
-    """Create LaTeX table for Top 20 by betweenness from metrics.csv."""
     mfile = res / 'metrics.csv'
     if not mfile.exists():
         return False
-    import csv
     with mfile.open(encoding='utf-8') as f:
         rows = list(csv.DictReader(f))
     for r in rows:
@@ -175,18 +169,15 @@ def write_metrics_top20_betweenness(res: Path) -> bool:
     top = rows[:20]
     tex = res / 'metrics_top20_betweenness.tex'
     with tex.open('w', encoding='utf-8') as f:
-        f.write('\\begin{table}[h]\n\\centering\n')
-        f.write('\\caption{Top 20 Betweenness (Toplam D\\"ug\\"umler)}\n')
-        f.write('\\begin{tabular}{lrrrr}\n\\toprule\n')
-        f.write('Paket & Betweenness & In-Degree & Out-Degree & TopN? \\\\ \\midrule\n')
+        _lt_begin(f, 'Top 20 Betweenness (Toplam Dugumler)', 'lrrrr', 'Paket & Betweenness & In-Degree & Out-Degree & TopN?')
         for r in top:
             pkg = (r.get('package','') or '').replace('&','\\&')
             indeg = r.get('in_degree','0')
             outdeg = r.get('out_degree','0')
             btw = f"{float(r.get('betweenness',0.0)):.6f}"
             istop = r.get('is_topN', r.get('is_top100','False'))
-            f.write(f"{pkg} & {btw} & {indeg} & {outdeg} & {istop} \\\n")
-        f.write('\\bottomrule\n\\end{tabular}\n\\end{table}\n')
+            f.write(f"{pkg} & {btw} & {indeg} & {outdeg} & {istop} \\\\" + "\n")
+        _lt_end(f)
     return True
 
 
@@ -209,9 +200,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-
-
-
-

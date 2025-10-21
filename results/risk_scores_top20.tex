@@ -1,9 +1,17 @@
-\begin{table}[h]
-\centering
-\caption{Top 20 Risk Skoru}
-\begin{tabular}{lrrrrr}
+\begin{longtable}{lrrrrr}
+\caption{Top 20 Risk Skoru}\\
 \toprule
-Paket & Risk & In-Degree & Out-Degree & Betweenness & TopN? \\ \midrule
+Paket & Risk & In-Degree & Out-Degree & Betweenness & TopN? \\
+\midrule
+\endfirsthead
+\toprule
+Paket & Risk & In-Degree & Out-Degree & Betweenness & TopN? \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\bottomrule
+\endlastfoot
 es-abstract & 0.534931 & 10 & 54 & 0.000785 & True \\
 tslib & 0.500000 & 62 & 0 & 0.000000 & True \\
 @babel/helper-plugin-utils & 0.467742 & 58 & 0 & 0.000000 & True \\
@@ -24,6 +32,4 @@ debug & 0.191845 & 21 & 1 & 0.000051 & True \\
 @jest/core & 0.187008 & 2 & 28 & 0.000238 & True \\
 chalk & 0.185484 & 23 & 0 & 0.000000 & True \\
 @babel/types & 0.181088 & 18 & 2 & 0.000079 & True \\
-\bottomrule
-\end{tabular}
-\end{table}
+\end{longtable}

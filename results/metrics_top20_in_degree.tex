@@ -1,9 +1,17 @@
-\begin{table}[h]
-\centering
-\\\caption{Top 20 In-Degree (Toplam Düğümler)}
-\begin{tabular}{lrrrr}
+\begin{longtable}{lrrrr}
+\caption{Top 20 In-Degree (Toplam Dugumler)}\\
 \toprule
-Paket & In-Degree & Out-Degree & Betweenness & TopN? \\ \midrule
+Paket & In-Degree & Out-Degree & Betweenness & TopN? \\
+\midrule
+\endfirsthead
+\toprule
+Paket & In-Degree & Out-Degree & Betweenness & TopN? \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\bottomrule
+\endlastfoot
 tslib & 62 & 0 & 0.000000 & True \\
 @babel/helper-plugin-utils & 58 & 0 & 0.000000 & True \\
 @smithy/types & 48 & 1 & 0.000001 & True \\
@@ -24,6 +32,4 @@ es-object-atoms & 15 & 1 & 0.000006 & True \\
 gopd & 15 & 0 & 0.000000 & True \\
 @smithy/protocol-http & 14 & 2 & 0.000000 & True \\
 semver & 14 & 0 & 0.000000 & True \\
-\bottomrule
-\end{tabular}
-\end{table}
+\end{longtable}
