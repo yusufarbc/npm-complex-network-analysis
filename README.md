@@ -7,6 +7,8 @@ Bu proje, NPM ekosistemindeki paketleri yönlü bir ağ olarak modelleyip yapıs
 - Ayrıntılı açıklamalar `paper/main.tex` ile uyumludur; tam metin için `paper/main.pdf`.
 - Not: Depoda `.gitignore` varsayılan olarak `results/` klasörünü dışlar. Uzak depoda sonuçları göstermek istiyorsanız bu klasörü geçici olarak dahil edebilir (`git add -f results/...`) ya da ayrı bir yayın klasörü (örn. `docs/`) kullanabilirsiniz.
 
+- https://yusufarbc.github.io/npm-complex-network-analysis/
+
 ## Öz
 - Ağ: Yönlü grafik (NetworkX `DiGraph`)
 - Düğüm: NPM paketi
