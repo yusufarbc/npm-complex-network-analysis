@@ -44,6 +44,7 @@ pip install -r requirements.txt
   - `degree_histograms.png/.svg`, `scatter_correlations.png/.svg`
   - `top10_in_degree.png`, `top10_out_degree.png`, `top10_betweenness.png`, `top10_leaders.png`
   - `top20_risk.png/.svg`
+  - `cascade_impact_top20.png/.svg`, `risk_vs_cascade.png/.svg`
 
 ## Varsayımlar ve Sınırlamalar
 - Kenar yönü Dependent → Dependency; yayılım analizi için uygundur.

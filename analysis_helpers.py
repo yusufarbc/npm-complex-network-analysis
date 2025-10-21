@@ -226,9 +226,8 @@ def build_dependency_graph(
                         break
                 cache[pkg] = deps
             for dep in deps.keys():
+                # NetworkX add_edge implicitly adds missing nodes
                 G.add_edge(pkg, dep)  # Dependent -> Dependency
-                if dep not in G:
-                    G.add_node(dep)
     _save_cache(cache_path, cache)
     return G, top_set
 
@@ -419,3 +418,66 @@ def save_report(
         lines.append(f"- {n}: {v:.6f}")
 
     out_path.write_text("\n".join(lines), encoding="utf-8")
+
+
+# Genel grafik istatistiklerini JSON olarak kaydet
+def save_graph_stats(G: nx.DiGraph, out_path: Path) -> None:
+    """Düğüm/kenar sayısı ve zayıf bileşen istatistiklerini JSON olarak kaydet."""
+    import json
+    W = G.to_undirected()
+    comps = list(nx.connected_components(W))
+    comp_sizes = sorted([len(c) for c in comps], reverse=True)
+    stats = {
+        "nodes": int(G.number_of_nodes()),
+        "edges": int(G.number_of_edges()),
+        "components_count": int(len(comps)),
+        "largest_component_size": int(comp_sizes[0]) if comp_sizes else 0,
+    }
+    try:
+        if comps:
+            giant = W.subgraph(max(comps, key=len)).copy()
+            stats["diameter_lcc"] = float(nx.diameter(giant)) if nx.is_connected(giant) else float("nan")
+        else:
+            stats["diameter_lcc"] = float("nan")
+    except Exception:
+        stats["diameter_lcc"] = float("nan")
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text(json.dumps(stats, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+# Belirli tohum düğümler için ters yönde (dependents) yayılım etki boyutu
+def cascade_impact_counts(G: nx.DiGraph, seeds: List[str]) -> Dict[str, int]:
+    """Her seed için, ters yön (dependents) boyunca erişilebilen düğüm sayısını hesapla.
+
+    Kenarlar Dependent->Dependency yönündedir. Bir bağımlılığın ele geçirilmesi,
+    orijinal grafikte bu düğüme ulaşabilen (yani dependents) düğümleri etkiler.
+    Bu nedenle G'nin tersinde, seed'den erişilebilen düğümler sayılır.
+    """
+    G_rev = G.reverse(copy=False)
+    from collections import deque
+    result: Dict[str, int] = {}
+    for s in seeds:
+        if s not in G_rev:
+            result[s] = 0
+            continue
+        seen = {s}
+        dq = deque([s])
+        while dq:
+            u = dq.popleft()
+            for v in G_rev.successors(u):
+                if v not in seen:
+                    seen.add(v)
+                    dq.append(v)
+        # Kendisi hariç
+        result[s] = max(0, len(seen) - 1)
+    return result
+
+
+def save_cascade_impact(impact: Dict[str, int], out_path: Path) -> None:
+    """Cascade etki sayaçlarını CSV olarak kaydet (seed, impacted_count)."""
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    with out_path.open("w", newline="", encoding="utf-8") as f:
+        w = csv.writer(f)
+        w.writerow(["package", "impacted_count"])
+        for n, c in sorted(impact.items(), key=lambda kv: kv[1], reverse=True):
+            w.writerow([n, int(c)])
