@@ -1,6 +1,7 @@
 """
-Türkçe yardımcı fonksiyonlar: NPM Top-N listesi, bağımlılıkların çekilmesi,
-yönlü ağın (Dependent → Dependency) kurulması, merkeziyet metrikleri ve çıktıların kaydı.
+Türkçe yardımcı fonksiyonlar: NPM Top‑N listesi, bağımlılıkların çekilmesi,
+yönlü ağın (Dependent → Dependency) kurulması, merkeziyet metrikleri ve
+çıktıların kaydı. Basit önbellek ve hata dayanımı içerir.
 
 Bu modül, analysis.ipynb tarafından kullanılır.
 """
@@ -9,7 +10,7 @@ from __future__ import annotations
 
 import csv
 from pathlib import Path
-from typing import Dict, List, Set, Tuple
+from typing import Dict, List, Set, Tuple, Optional
 
 import networkx as nx
 import requests
@@ -98,7 +99,8 @@ def _fetch_top_packages_npms(limit: int) -> List[str]:
 def fetch_top_packages(limit: int = 100) -> List[str]:
     """En çok indirilen Top-N paket adlarını getir (tercihen ecosyste.ms, ardından yedekler)."""
     try:
-        if limit > 1000:
+        # 1000 ve üzeri için sayfalı toplama daha güvenilir
+        if limit >= 1000:
             names = _fetch_top_packages_ecosystems_paginated(limit)
             if names:
                 return names
@@ -138,7 +140,7 @@ def encode_npm_name(name: str) -> str:
 
 
 # Bir paketin en güncel sürümünden dependencies alanını çek
-def fetch_dependencies(package: str, session: requests.Session | None = None) -> Dict[str, str]:
+def fetch_dependencies(package: str, session: Optional[requests.Session] = None) -> Dict[str, str]:
     """Bir paketin npm registry’deki en güncel sürümünden `dependencies` alanını çek.
 
     Daha verimli olmak için varsa paylaşılan bir `requests.Session` kullanır.
@@ -169,8 +171,34 @@ def fetch_dependencies(package: str, session: requests.Session | None = None) ->
     return deps if isinstance(deps, dict) else {}
 
 
+# Basit disk önbelleği (JSON) — bağımlılık sorguları için
+def _load_cache(path: Path) -> Dict[str, Dict[str, str]]:
+    """Önbelleği yükle (yoksa boş sözlük)."""
+    try:
+        if path.exists():
+            import json
+            return json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        pass
+    return {}
+
+
+def _save_cache(path: Path, cache: Dict[str, Dict[str, str]]) -> None:
+    """Önbelleği diske yaz (güvenli yazım)."""
+    try:
+        import json, tempfile
+        path.parent.mkdir(parents=True, exist_ok=True)
+        tmp = Path(tempfile.gettempdir()) / (path.name + ".tmp")
+        tmp.write_text(json.dumps(cache, ensure_ascii=False), encoding="utf-8")
+        tmp.replace(path)
+    except Exception:
+        pass
+
+
 # Top-N listesinden yönlü bağımlılık ağı kur (Dependent → Dependency)
-def build_dependency_graph(top_packages: List[str]) -> Tuple[nx.DiGraph, Set[str]]:
+def build_dependency_graph(
+    top_packages: List[str], cache_path: Optional[Path] = None
+) -> Tuple[nx.DiGraph, Set[str]]:
     """Top-N listesi için yönlü bir bağımlılık ağı (Dependent → Dependency) kur ve döndür.
 
     Bağlantı maliyetini azaltmak için tek bir HTTP oturumu (Session) yeniden kullanılır.
@@ -179,28 +207,50 @@ def build_dependency_graph(top_packages: List[str]) -> Tuple[nx.DiGraph, Set[str
     top_set: Set[str] = set(top_packages)
     for pkg in top_packages:
         G.add_node(pkg)
+    cache: Dict[str, Dict[str, str]] = {}
+    if cache_path is None:
+        cache_path = Path("results/cache_deps.json")
+    cache = _load_cache(cache_path)
     with requests.Session() as session:
         for pkg in top_packages:
-            deps = fetch_dependencies(pkg, session=session)
+            # Önbellekten dene
+            deps: Dict[str, str]
+            if pkg in cache:
+                deps = cache.get(pkg) or {}
+            else:
+                # Basit 3 denemeli çekim
+                deps = {}
+                for _ in range(3):
+                    deps = fetch_dependencies(pkg, session=session)
+                    if deps:
+                        break
+                cache[pkg] = deps
             for dep in deps.keys():
                 G.add_edge(pkg, dep)  # Dependent → Dependency
                 if dep not in G:
                     G.add_node(dep)
+    _save_cache(cache_path, cache)
     return G, top_set
 
 
 # Ağ için in-degree, out-degree ve betweenness metriklerini hesapla
-def compute_metrics(G: nx.DiGraph) -> Tuple[Dict[str, int], Dict[str, int], Dict[str, float]]:
+def compute_metrics(
+    G: nx.DiGraph, sample_k: Optional[int] = None
+) -> Tuple[Dict[str, int], Dict[str, int], Dict[str, float]]:
     """Ağ için in-degree, out-degree ve betweenness merkeziyet metriklerini hesapla.
 
-    Büyük graf’larda (örn. >1200 düğüm) betweenness için örnekleme (k) kullanarak hesaplamayı hızlandırır.
+    Büyük graf’larda (örn. >1200 düğüm) betweenness için örnekleme (k)
+    kullanarak hesaplamayı hızlandırır. sample_k verilirse o değer esas alınır.
     """
     in_deg: Dict[str, int] = dict(G.in_degree())
     out_deg: Dict[str, int] = dict(G.out_degree())
     n = G.number_of_nodes()
-    if n > 1200:
+    if sample_k is not None:
+        k = min(sample_k, n)
+        btw = nx.betweenness_centrality(G, k=k, normalized=True, seed=42)
+    elif n > 1200:
         k = min(200, n)
-        btw: Dict[str, float] = nx.betweenness_centrality(G, k=k, normalized=True, seed=42)
+        btw = nx.betweenness_centrality(G, k=k, normalized=True, seed=42)
     else:
         btw = nx.betweenness_centrality(G, normalized=True)
     return in_deg, out_deg, btw
