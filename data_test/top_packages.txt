@@ -1,0 +1,10 @@
+semver
+ansi-styles
+debug
+chalk
+minimatch
+supports-color
+strip-ansi
+ms
+ansi-regex
+tslib
