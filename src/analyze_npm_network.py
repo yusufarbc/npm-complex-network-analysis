@@ -259,7 +259,7 @@ def main():
     )
     parser.add_argument("--top", type=int, default=100, help="Number of top packages")
     parser.add_argument(
-        "--outdir", type=str, default="data", help="Output directory for artifacts"
+        "--outdir", type=str, default="results", help="Output directory for artifacts"
     )
     parser.add_argument(
         "--input-list",

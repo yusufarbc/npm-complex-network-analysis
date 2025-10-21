@@ -31,7 +31,7 @@ pip install -r requirements.txt
 Top 200 sabit listesinden ağ ve metrikler:
 
 ```
-python src/analyze_npm_network.py --input-list data/top_200.txt --outdir data
+python src/analyze_npm_network.py --input-list data/top_200.txt --outdir results
 ```
 
 Not defterinden (Jupyter) etkileşimli çalışma:
@@ -42,10 +42,10 @@ Not defterinden (Jupyter) etkileşimli çalışma:
 İsteğe bağlı – Top 20.000 ismi yalnızca liste olarak indir (graf kurmadan):
 
 ```
-python src/analyze_npm_network.py --top 20000 --outdir data --list-only
+python src/analyze_npm_network.py --top 20000 --outdir results --list-only
 ```
 
-## Üretilen Dosyalar (`--outdir` altında)
+## Üretilen Dosyalar (`--outdir` altında, varsayılan `results/`)
 
 - `edges.csv`: Kenar listesi (source=dependent, target=dependency)
 - `metrics.csv`: `package,in_degree,betweenness,is_top100`
@@ -70,4 +70,3 @@ python src/analyze_npm_network.py --top 20000 --outdir data --list-only
 - `src/analyze_npm_network.py`: Top‑N’i alır veya dosyadan okur, NetworkX ile grafı kurar, metrikleri hesaplar ve çıktıları üretir.
 - `analysis.ipynb`: Adım adım defter; Top‑N getirme, ağ kurma, metrik hesaplama ve saklama.
 - `data/top_200.txt`: Kanonik Top 200 listesi (sürüm kontrollü). Diğer `data/*` çıktıları git tarafından yok sayılır.
-
