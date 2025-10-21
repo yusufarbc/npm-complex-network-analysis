@@ -6,7 +6,6 @@
 \usepackage{lmodern}
 \usepackage{geometry}
 \usepackage{graphicx}
-\graphicspath{{../results/}}
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{booktabs}
@@ -14,17 +13,11 @@
 \usepackage{hyperref}
 \usepackage{longtable}
 \usepackage{xcolor}
-% Dosya var-yok kontrolünü results/ için de yapacak şekilde sarmalayıcı
-\let\OrigIfFileExists\IfFileExists
-\renewcommand{\IfFileExists}[3]{%
-  \OrigIfFileExists{#1}{#2}{%
-    \OrigIfFileExists{../results/#1}{#2}{#3}%
-  }%
-}
 \geometry{margin=2.5cm}
 \hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
+\graphicspath{{../results/}}
 
-\title{NPM Ekosisteminde Top N Paket İçin Yönlü Karmaşık Ağ Analizi: Merkeziyet, Risk Skoru ve Robustluk}
+\title{NPM Ekosisteminde Yonlu Karmasik Ag Analizi: Merkeziyet, Risk Skoru ve Robustluk}
 \author{\textbf{Yusuf Talha ARABACI}}
 \date{\today}
 
@@ -32,194 +25,138 @@
 \maketitle
 
 \begin{abstract}
-Bu çalışma, NPM ekosistemindeki popüler Top~N paketi, bağımlılık ilişkilerine göre yönlü bir karmaşık ağ (Dependent~$\to$~Dependency) olarak modellemekte ve yapısal riskleri merkeziyet metrikleriyle incelemektedir. Veri, her çalıştırmada API'lerden (öncelikle ecosyste.ms; yedek olarak npm registry ve npms.io) çekilmektedir. Ağ, NetworkX ile kurulmakta; in-degree, out-degree ve betweenness merkeziyet metrikleri hesaplanmaktadır. Büyük grafiklerde betweenness hesaplaması örnekleme (k) ile hızlandırılmaktadır. Çalışma ayrıca bileşik bir risk skoru (normalize edilmiş in/out/between ağırlıklı toplamı) ve risk tabanlı robustluk analizi (kritik düğümlerin kaldırılması) önermektedir. Üretilen tüm çıktılar (CSV/MD/JSON ve PNG/SVG görseller) results/ dizininde saklanır.
+Bu calisma, NPM ekosistemindeki populer Top~N paketi, bagimlilik iliskilerine gore yonlu bir karmasik ag (Dependent~$\to$~Dependency) olarak modellemekte ve yapisal riskleri merkeziyet metrikleriyle incelemektedir. Veri, her calistirmada API'lerden (oncelikle ecosyste.ms; yedek olarak npm registry ve npms.io) cekilmektedir. Ag, NetworkX ile kurulmakta; in-degree, out-degree ve betweenness merkeziyet metrikleri hesaplanmaktadir. Buyuk graflarda betweenness hesaplamasi ornekleme ($k$) ile hizlandirilmaktadir. Calisma ayrica bilesik bir risk skoru (normalize edilmis in/out/between agirlikli toplami) ve risk tabanli robustluk analizi (kritik dugumlerin kaldirilmasi) onermektedir. Uretilen tum ciktilar (CSV/MD/JSON ve PNG/SVG gorseller) results/ dizininde saklanir.
 \end{abstract}
 
-\section{Giriş}
-Yazılım tedarik zinciri saldırılarında (SSCA), tek bir bağımlılığın ele geçirilmesi geniş çapta zincirleme etkilere yol açabilir. NPM ekosistemi, yoğun bağımlılık ilişkilerine sahip olup, paketlerin yapısal konumuna göre sistemik risk taşıyabilmektedir. Bu çalışma, Top~N paket üzerinden inşa edilen yönlü bağımlılık ağı ile aşağıdaki sorulara odaklanır:
+\section{Giris}
+Yazilim tedarik zinciri saldirilarinda (SSCA), tek bir bagimliligin ele gecirilmesi genis capta zincirleme etkilere yol acabilir. NPM ekosistemi, yogun bagimlilik iliskilerine sahip olup, paketlerin yapisal konumuna gore sistemik risk tasiyabilmektedir. Bu calisma, Top~N paket uzerinden insa edilen yonlu bagimlilik agi ile asagidaki sorulara odaklanir:
 \begin{itemize}
-  \item Hangi düğümler (paketler) yapısal olarak kritik (yüksek in-degree, yüksek betweenness)?
-  \item Hangi düğümler geniş bağımlılık yüzeyine sahip (yüksek out-degree)?
-  \item Merkeziyetlere dayalı bileşik bir risk skoru ile risk liderleri nasıl sıralanır?
-  \item Kritik düğümler kaldırıldığında ağın bağlanırlığı nasıl değişir (robustluk)?
+  \item Hangi dugumler (paketler) yapisal olarak kritik (yuksek in-degree, yuksek betweenness)?
+  \item Hangi dugumler genis bagimlilik yuzeyine sahip (yuksek out-degree)?
+  \item Merkeziyetlere dayali bilesik bir risk skoru ile risk liderleri nasil siralanir?
+  \item Kritik dugumler kaldirildiginda agin baglanirliligi nasil degisir (robustluk)?
 \end{itemize}
 
-\section{\c{C}al\i\c{s}man\i n Amac\i}
-Bu \c{c}al\i\c{s}man\i n temel amac\i, yaz\i l\i m tedarik zinciri g\"uvenli\u{g}ini yap\i sal bir bak\i\c{s} a\c{c}\i s\i yla yeniden tan\i mlamak ve mevcut g\"uvenlik de\u{g}erlendirme yakla\c{s}\i mlar\i na a\u{g} bilimi temelli bir \"o\l c\"ut kazand\i rmakt\i r. Geleneksel sistemler (\"or. CVSS), riski yaln\i zca paket i\c{c}i zafiyetlerle \"ol\c{c}erken; ger\c{c}ekte risk, paketin ba\u{g}\i ml\i oldu\u{g}u ve kendisine ba\u{g}\i ml\i olan paketlerle kurdu\u{g}u ili\c{s}kilerden de kaynaklan\i r. Bu nedenle NPM ekosistemindeki paketleri bir \emph{karma\c{s}\i k a\u{g}} olarak modelleyerek, her bir paketin a\u{g} i\c{c}indeki yap\i sal \"onemini, ele ge\c{c}irilmesi durumunda yaratabilece\u{g}i basamaklanma (\emph{cascading}) etkisini ve bunun sistemik g\"uvenlik riski \"uzerindeki nicel etkilerini bilimsel metriklerle \"ol\c{c}meyi ve \"ong\"ormeyi hedefliyoruz.
+\section{Calismanin Amaci}
+Amac, yazilim tedarik zinciri guvenligini paket-ici zafiyetlerin otesine gecirerek, bagimlilik agi topolojisini de hesaba katan yapisal bir olcut kazandirmaktir. NPM paketleri yonlu bir karmasik ag olarak modellenerek, her paketin ag icindeki yapisal onemi, ele gecirilmesi durumunda yaratabilecegi basamaklanma (cascading) etkisi ve bunun sistemik risk uzerindeki nicel etkileri olculebilir.
 
+\section{Veri ve Yontem}
+Top~N paket listesi, her calistirmada API'lerden cekilir (oncelik ecosyste.ms; yedek olarak npm registry ve npms.io). Bagimliliklar, npm registry'de paketlerin en guncel surumlerinin \texttt{dependencies} alanindan alinir; istege bagli \texttt{peerDependencies} de eklenebilir. Yonlu ag, Dependent~$\to$~Dependency yonuyle kurulur. Buyuk graflarda betweenness orneklemeli ($k$) hesaplanir.
 
-\section{Veri ve Yöntem}
-Top~N paket listesi, her çalıştırmada API'lerden çekilir. Öncelik ecosyste.ms üzerinde indirmeye göre sıralı paket adlarındadır; başarısız durumlarda npm registry araması (popularity) ve npms.io (popülerlik skoru) yedek olarak kullanılır. Bağımlılıklar, npm registry'de paketlerin en güncel sürümlerinin \texttt{dependencies} alanından okunur; isteğe bağlı olarak \texttt{peerDependencies} de dahil edilebilir. Yönlü ağ, Dependent~$\to$~Dependency yönüyle kurulur. Büyük graflarda betweenness merkeziyeti örneklemeli (k) hesaplanır.
-
-
-
-\subsection{Parametreler}
-Varsayilanlar: Top~N=200 (defterde 1000 de denenmistir), \texttt{include\_peer\_deps}=False, betweenness icin \texttt{sample\_k} \emph{otomatik} ($n\leq 1200$ ise tam, aksi halde $k=200$). Risk agirliklari: $w_{in}=0.5$, $w_{out}=0.2$, $w_b=0.3$. Ciktilar \texttt{results/} dizinine yazilir.
-\section{Ağ Modeli ve Metrikler}
-Model, NetworkX ile kurulmuş \texttt{DiGraph} yapısıdır. Temel metrikler:
-\begin{itemize}
-  \item \textbf{In-Degree:} Düğüme gelen kenar sayısı (bu pakete dayanan paket sayısı). Ele geçirilirse etki alanını gösterir.
-  \item \textbf{Out-Degree:} Düğümün dış bağımlılık sayısı. Bağımlılık zinciri uzunluğu/karmaşıklığına işaret eder.
-  \item \textbf{Betweenness:} En kısa yollardaki aracılık. Köprü rolünü ve tek hata noktası potansiyelini gösterir.
-\end{itemize}
+\section{Ag Modeli ve Metrikler}
+Model, NetworkX ile kurulmus \texttt{DiGraph} yapsidir. Temel metrikler: (i) In-Degree: dugume gelen kenar sayisi (pakete dayanan paket sayisi); (ii) Out-Degree: dugumun dis bagimlilik sayisi; (iii) Betweenness: en kisa yollardaki aracilik (kopru rolu).
 
 \section{Bulgular}
-Bu bölümde, results/ dizinindeki çıktıları kullanarak görsel ve tablolu özetler sunulmaktadır.
+Bu bolumde, results/ dizinindeki ciktilari kullanarak gorsel ve tablolu ozetler sunulmaktadir.
 
-\subsection{Ağ Görselleştirmeleri}
+\subsection{Ag Gorsellestirmeleri}
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.95\linewidth]{network_full_topN.png}
-
-  \caption{Top N + bağımlılıkların oluşturduğu yönlü ağ (düğüm boyutu: in-degree, renk: Top N turuncu / diğerleri mavi).}
+  \includegraphics[width=0.90\linewidth]{network_full_topN.png}
+  \caption{Top N + bagimliliklarin olusturdugu yonlu ag (dugum boyutu: in-degree, renk: Top N turuncu / digerleri mavi).}
 \end{figure}
 
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\linewidth]{network_topN_only.png}
-
-  \caption{Sadece Top N düğümlerin indüklenmiş alt-ağı.}
+  \caption{Sadece Top N dugumlerin induklenmis alt-agi.}
 \end{figure}
 
-\subsection{Derece Dağılımları ve Korelasyonlar}
+\subsection{Derece Dagilimlari ve Korelasyonlar}
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.95\linewidth]{degree_histograms.png}
-
-  \caption{In-Degree ve Out-Degree histogramları (log ölçek).}
+  \includegraphics[width=0.90\linewidth]{degree_histograms.png}
+  \caption{In-Degree ve Out-Degree histogramlari (log olcek).}
 \end{figure}
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.95\linewidth]{scatter_correlations.png}
-
-  \caption{Korelasyonlar: In-Degree vs Betweenness (solda), In-Degree vs Out-Degree (sağda).}
+  \includegraphics[width=0.90\linewidth]{scatter_correlations.png}
+  \caption{Korelasyonlar: In-Degree vs Betweenness (solda), In-Degree vs Out-Degree (sagda).}
 \end{figure}
 
-\subsection{Liderler (İlk 10)}
+\subsection{Liderler (Ilk 10)}
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.95\linewidth]{top10_leaders.png}
-
-  \caption{İlk 10 lider (In/Out-Degree ve Betweenness).}
+  \includegraphics[width=0.90\linewidth]{top10_leaders.png}
+  \caption{Ilk 10 lider (In/Out-Degree ve Betweenness).}
 \end{figure}
 
-\subsection{Ek Görseller}
+\subsection{Ek Gorseller}
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.48\linewidth]{top10_in_degree.png}
-
   \includegraphics[width=0.48\linewidth]{top10_out_degree.png}
-
-  \caption{İlk 10 In-Degree (sol) ve Out-Degree (sağ).}
+  \caption{Ilk 10 In-Degree (sol) ve Out-Degree (sag).}
 \end{figure}
 
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.6\linewidth]{top10_betweenness.png}
-
-  \caption{İlk 10 Betweenness.}
+  \caption{Ilk 10 Betweenness.}
 \end{figure}
 
 \subsection{Risk Skoru ve Robustluk}
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.75\linewidth]{top20_risk.png}
-
-  \caption{Bileşik risk skoruna göre ilk 20 paket.}
+  \caption{Bilesik risk skoru ile ust 20 paket.}
 \end{figure}
 
-\paragraph{Edge Betweenness İlk 10.} Aşağıdaki tablo, en yüksek edge betweenness değerine sahip 10 kenarı göstermektedir.
-
+\paragraph{Edge Betweenness Ilk 10.} Asagidaki tablo, en yuksek edge betweenness degerine sahip 10 kenari gostermektedir.
+\IfFileExists{../results/edge_betweenness_top10.tex}{\input{../results/edge_betweenness_top10.tex}}{\fbox{edge\_betweenness\_top10.tex bulunamad\i }}
 
 \subsection{Ek Tablolar}
-\paragraph{Top 20 In-Degree (Tüm Düğümler).}
-\IfFileExists{../results/metrics_top20_in_degree.tex}{\input{../results/metrics_top20_in_degree.tex}}{\fbox{metrics\_top20\_in\_degree.tex bulunamadı}}
+\paragraph{Top 20 In-Degree (Tum Dugumler).}
+\IfFileExists{../results/metrics_top20_in_degree.tex}{\input{../results/metrics_top20_in_degree.tex}}{\fbox{metrics\_top20\_in\_degree.tex bulunamad\i }}
+
+\paragraph{Top 20 Out-Degree.}
+\IfFileExists{../results/metrics_top20_out_degree.tex}{\input{../results/metrics_top20_out_degree.tex}}{\fbox{metrics\_top20\_out\_degree.tex bulunamad\i }}
+
+\paragraph{Top 20 Betweenness.}
+\IfFileExists{../results/metrics_top20_betweenness.tex}{\input{../results/metrics_top20_betweenness.tex}}{\fbox{metrics\_top20\_betweenness.tex bulunamad\i }}
 
 \paragraph{Top 20 Risk Skoru.}
-\IfFileExists{../results/risk_scores_top20.tex}{\input{../results/risk_scores_top20.tex}}{\fbox{risk\_scores\_top20.tex bulunamadı}}
+\IfFileExists{../results/risk_scores_top20.tex}{\input{../results/risk_scores_top20.tex}}{\fbox{risk\_scores\_top20.tex bulunamad\i }}
 
 \subsection{Basamaklanma (Cascading Impact)}
 Risk liderleri icin hesaplanan basamaklanma etkisi asagidaki gorselde sunulmustur.
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.75\linewidth]{cascade_impact_top20.png}
-
-  \caption{Risk skoruna g\"ore ilk 20 paket i\c{c}in basamaklanma (cascading impact) b\"uy\"ukl\"u\u{g}\u{u}.}
+  \caption{Risk skoruna gore ust 20 paket icin basamaklanma (cascading impact) buyuklugu.}
 \end{figure}
+\IfFileExists{../results/cascade_impact_top20.tex}{\input{../results/cascade_impact_top20.tex}}{\fbox{cascade\_impact\_top20.tex bulunamad\i }}
 
-\paragraph{Risk--Basamaklanma \c{C}izimi.} Ek olarak, risk skoru ile basamaklanma etkisi aras\i ndaki ili\c{s}ki de g\"ozlemlenmi\c{s}tir.
+\paragraph{Risk--Basamaklanma Cizimi.} Ek olarak, risk skoru ile basamaklanma etkisi arasindaki iliski de gozlemlenmistir.
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.6\linewidth]{risk_vs_cascade.png}
-
-  \caption{Risk skoru ile basamaklanma etkisi aras\i ndaki ili\c{s}ki (scatter).}
+  \caption{Risk skoru ile basamaklanma etkisi arasindaki iliski (scatter).}
 \end{figure}
 
-
-
-
-\section{Tum Ciktilar ve Dosya Ozeti}
-\subsection{Gorseller (PNG/SVG)}
-Bu calismada uretilen temel gorseller asagidadir; tamam\i results/ dizinindedir.
-\begin{itemize}
-  \item network\_full\_topN.(png|svg): Top N + bagimliliklarin tam agi
-  \item network\_topN\_only.(png|svg): Sadece Top N ind\"uklenmis alt-ag
-  \item degree\_histograms.(png|svg): In/Out-degree histogramlari (log olcek)
-  \item scatter\_correlations.(png|svg): In-Degree vs Betweenness; In-Degree vs Out-Degree
-  \item top10\_in\_degree.(png|svg), top10\_out\_degree.(png|svg), top10\_betweenness.(png|svg), top10\_leaders.(png|svg)
-  \item top20\_risk.(png|svg): Bilesik risk skoruna gore ilk 20
-  \item cascade\_impact\_top20.(png|svg): Basamaklanma etkisi (risk liderleri)
-  \item risk\_vs\_cascade.(png|svg): Risk ile basamaklanma iliskisi (scatter)
-\end{itemize}
-
-\subsection{Veri ve Tablolar}
-Asagidaki dosyalar metrik ve arakatman ciktilarini icerir:
-\begin{longtable}{ll}
-\toprule
-\textbf{Dosya} & \textbf{Aciklama} \\
-\midrule
-\texttt{edges.csv} & Kenar listesi (source=dependent, target=dependency) \\
-\texttt{metrics.csv} & Dugum metrikleri (in/out/between, is\_topN) \\
-\texttt{risk\_scores.csv} & Bilesik risk skorlar\i \\
-\texttt{edge\_betweenness\_top10.csv} & En yuksek edge betweenness 10 kenar \\
-\texttt{robustness\_risk.json} & Risk tabanli kaldirma senaryolari icin baglanirlik \\
-\texttt{graph\_stats.json} & Genel ag istatistikleri (dugum/kenar, bilesen, cap) \\
-\texttt{top\_packages.txt} & Kullanilan Top N paket adlari \\
-\texttt{report.md} & Kisa siralama raporu (ilk 20 listeler) \\
-\texttt{metrics\_top20\_in\_degree.tex} & Top 20 In-Degree (LaTeX tablo) \\
-\texttt{risk\_scores\_top20.tex} & Top 20 Risk Skoru (LaTeX tablo) \\
-\texttt{cache\_deps.json} & Bagimlilik sorgulari icin onbellek \\
-\bottomrule
-\end{longtable}
-\section{Risk Skoru Tanımı}
-Normalize edilmiş metrikler (min‑max) üzerinden ağırlıklandırılmış bir risk skoru tanımlanmıştır:
-\[
-\mathrm{risk}(n) = w_{in}\,\tilde{d}_{in}(n) + w_{out}\,\tilde{d}_{out}(n) + w_{b}\,\tilde{b}(n),
-\]
-burada $\tilde{d}_{in},\tilde{d}_{out},\tilde{b}$ sırasıyla in-degree, out-degree ve betweenness'in normalize edilmiş değerleridir. Ağırlıklar (ör. $w_{in}=0.5, w_{out}=0.2, w_{b}=0.3$) senaryoya göre ayarlanabilir.
+\section{Risk Skoru Tanimi}
+Normalize edilmis metrikler (min-max) uzerinden agirlandirilmis bir risk skoru tanimlanmistir: $\mathrm{risk}(n) = w_{in}\,\tilde d_{in}(n) + w_{out}\,\tilde d_{out}(n) + w_b\,\tilde b(n)$. Agirliklar (or. $w_{in}=0.5, w_{out}=0.2, w_b=0.3$) senaryoya gore ayarlanabilir.
 
 \section{Robustluk Analizi}
-Risk skoruna göre en kritik $k\in\{1,3,5\}$ düğüm kaldırıldığında zayıf bağlanırlık bileşen sayısı, en büyük bileşen boyutu ve (mümkünse) çap raporlanır. Ayrıntılar results/ dizinindeki \texttt{robustness\_risk.json} dosyasındadır.
+Risk skoruna gore en kritik $k\in\{1,3,5\}$ dugum kaldirildiginda zayif baglanirlik bilesen sayisi, en buyuk bilesen boyutu ve (mumkunse) cap raporlanir (bkz. \texttt{robustness\_risk.json}).
 
-\section{Sınırlamalar ve Gelecek Çalışmalar}
-\textbf{Sınırlamalar:} (i) Varsayılan olarak yalnız \texttt{dependencies} kullanılır; \texttt{peerDependencies} isteğe bağlıdır. (ii) Betweenness hesaplaması büyük graflarda örneklemelidir; kesin değerlerin yakınsaması ağı büyüklüğüne ve $k$ seçimine bağlıdır. (iii) Global dependent sayıları doğrudan dahil edilmemiştir.
+\section{Sinirlamalar ve Gelecek Calismalar}
+\textbf{Sinirlamalar:} (i) Varsayilan olarak yalnizca \texttt{dependencies} kullanilir; \texttt{peerDependencies} istege baglidir. (ii) Betweenness hesaplamasi buyuk graflarda orneklemelidir; kesin degerlerin yakinmasi ag buyuklugune ve $k$ secimine baglidir. (iii) Global dependent sayilari dogrudan dahil edilmemistir.
 
-\textbf{Gelecek Çalışmalar:} (i) Global dependent metriklerinin entegrasyonu, (ii) ağırlıkların veri odaklı (öğrenilmiş) belirlenmesi, (iii) çok katmanlı ağ modelleme (örn. dev/peer/optional bağımlılık katmanları), (iv) GEXF/GraphML çıktılarıyla etkileşimli görselleştirme.
+\textbf{Gelecek Calismalar:} (i) Global dependent metriklerinin entegrasyonu, (ii) agirliklarin veri odakli belirlenmesi, (iii) cok katmanli ag modelleme (orn. dev/peer/optional), (iv) GEXF/GraphML ciktilari ile etkilesimli gorsellestirme.
 
-\section{Sonuç}
-Bu çalışma, NPM ekosistemindeki popüler paketler için yönlü bağımlılık ağını kullanarak yapısal riskleri nicel olarak analiz etmektedir. Merkeziyet metrikleri, bileşik risk skoru ve robustluk analizleri, kritik düğümlerin ve köprülerin pratikte nasıl belirleneceğine dair net bir çerçeve sunmaktadır.
+\section{Sonuc}
+Bu calisma, NPM ekosistemindeki populer paketler icin yonlu bagimlilik agini kullanarak yapisal riskleri nicel olarak analiz etmektedir. Merkeziyet metrikleri, bilesik risk skoru ve robustluk analizleri, kritik dugumlerin ve koprulerin pratikte nasil belirlenecegine dair bir cerceve sunar.
 
-\paragraph{Çoğaltılabilirlik.} Tüm kod ve çıktı üretimi rapoyla birlikte depo içindedir. \texttt{analysis.ipynb} defteri çalıştırılarak results/ dizini yeniden üretilebilir ve bu makale \LaTeX~dosyası ile raporlanabilir.
+\paragraph{Cogaltilabilirlik.} Tum kod ve cikti uretimi depo icindedir. \texttt{analysis.ipynb} defteri calistirilarak results/ dizini yeniden uretilebilir ve bu makale \LaTeX~dosyasi ile raporlanabilir.
 
 \bibliographystyle{plain}
 \begin{thebibliography}{9}
 \bibitem{newman2010} Newman, M. (2010). \emph{Networks: An Introduction}. Oxford University Press.
 \bibitem{brandes2001} Brandes, U. (2001). A faster algorithm for betweenness centrality. \emph{Journal of Mathematical Sociology}.
-\bibitem{barabasi2016} Barabási, A.-L. (2016). \emph{Network Science}. Cambridge University Press.
+\bibitem{barabasi2016} Barab\'asi, A.-L. (2016). \emph{Network Science}. Cambridge University Press.
 \end{thebibliography}
 
 \end{document}
-
-
 
