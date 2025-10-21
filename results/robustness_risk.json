@@ -1,0 +1,44 @@
+{
+  "1": {
+    "removed": [
+      "es-abstract"
+    ],
+    "stats": {
+      "nodes": 1138.0,
+      "edges": 2100.0,
+      "components_count": 161.0,
+      "largest_component_size": 851.0,
+      "diameter_lcc": 15.0
+    }
+  },
+  "3": {
+    "removed": [
+      "es-abstract",
+      "tslib",
+      "@babel/helper-plugin-utils"
+    ],
+    "stats": {
+      "nodes": 1136.0,
+      "edges": 1980.0,
+      "components_count": 164.0,
+      "largest_component_size": 850.0,
+      "diameter_lcc": 15.0
+    }
+  },
+  "5": {
+    "removed": [
+      "es-abstract",
+      "tslib",
+      "@babel/helper-plugin-utils",
+      "@smithy/types",
+      "call-bound"
+    ],
+    "stats": {
+      "nodes": 1134.0,
+      "edges": 1893.0,
+      "components_count": 165.0,
+      "largest_component_size": 848.0,
+      "diameter_lcc": 15.0
+    }
+  }
+}

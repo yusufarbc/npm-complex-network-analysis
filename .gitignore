@@ -3,14 +3,6 @@ __pycache__/
 *.pyc
 .venv/
 
-# Data outputs
-/data/
-/data_*/
-/data-test*/
-
-# Results outputs
-/results/
-
 # Jupyter
 .ipynb_checkpoints/
 
