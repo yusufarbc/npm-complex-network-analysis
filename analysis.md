@@ -1,4 +1,4 @@
-# 📘 Yönetici Özeti
+# 📘 Çalışmanın Özeti
 
 ### NPM Ekosisteminde Karmaşık Ağ Analizi
 
