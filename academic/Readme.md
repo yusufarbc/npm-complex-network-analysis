@@ -1,7 +1,18 @@
-# NPM / OSS Supply Chain – Bilingual Literature Catalog (EN • TR)
+# Literatür Taraması
 
-_Kayıt sayısı: 32_
+Açık kaynak tedarik zinciri saldırılarının kapsamı ve teknikleri, **Backstabber’s Knife Collection**’da 2015–2019 arasında gerçekleşen 174 gerçek vaka üzerinden taksonomize edilmiştir [4]; bu çizgi, ekosistemler-arası kurulum/çalışma zamanı teknik haritası **Hitchhiker’s Guide** [24] ve yorumlanan dillerde kayıt suistimali ile kötüye kullanımı ölçen çalışma [28] ile tamamlanır. Npm-odaklı pratik riskler ve fenomenler **Wyss** [1] ve **Kang Yip** [12] tarafından ayrıntılandırılır. Ancak bu literatür, “ekosistem düzeyinde **hangi düğümlere** önce yatırım yapılmalı?” sorusunu operasyonel bir önceliklendirmeye dönüştürmez.
 
+Ağ bilimi cephesinde npm’nin küçük-dünya/ölçekten-bağımsız yapısı ve tekil bakımcı/paketlerin orantısız etkisi açıkça gösterilmiştir: **Zimmermann ve ark.** tekil bakımcı ve SPOF risklerini öne çıkarır [20]; **Hafner ve ark.** hedefli düğüm çıkarımlarında kırılganlığı ve eğilimleri niceller [16]; erken ağ-topoloji resmi **Oldnall** tarafından verilir [25]. Buna karşın, yapısal/topolojik merkeziyet (derece, betweenness, eigenvector/PageRank, k-çekirdek) ile kullanım yoğunluğunu (indirme payı, ters-bağımlı kapsamı) tek bir **bileşik “kritiklik” metriğine** dönüştürme eksik kalmıştır. Biz, indirime dayalı çekirdekte (son 12 ay, en çok indirilen ilk 1000 bağımlılık) bu iki boyutu kaynaştıran **Bileşik Kritiklik Skoru**’nu öneriyoruz.
+
+Bağımlılık çözümlemesinde **Liu ve ark.**’nın DVGraph/DTResolver hattı, npm’nin **resmî çözümleme kuralları**na sadık kalarak doğru geçişli ağaçları çıkarır; propagasyon ve evrimi ekosistem ölçeğinde niceller ve onarımda pratiği ilerletir [8]. Yine de bulgular doğrudan bir **operasyonel öncelik listesi**ne çevrilmemiştir. Biz, bu doğruluk ilkelerini temel alarak kurduğumuz yönlendirilmiş graf üzerinde **kritiklik sıralaması** üretiyoruz.
+
+“Tespit” hattında **Amalfi** [19], **OSCAR** [29], **Cerebro** [14], **çapraz-dil** yaklaşımlar [17], **ACME** [23] ve **MeMPtec** [15] güçlü sonuçlar üretse de, sınırlı analist kapasitesini nereye önce yönlendireceğini belirleyen bir **topolojik ön-filtre** eksiktir; bizim skorlamamız bu boru hatlarına **öncelikli tarama kuyruğu** sağlar. Depo davranış anomalileri ve havuz-içi tehdit algısı [11] bu kuyruğu tamamlayıcı sinyaller sunar.
+
+Operasyonel göstergeler/güncellik metrikleri ve bakım pratikleri, önceliklendirmeyi besler: **TOOD/PFET** güncellik ve zafiyet sonrası maruziyeti niceller [5]; **Jafari ve ark.** hızlı düzeltim benimsemeyi öngören pratikleri ortaya koyar [10]; **Zerouali ve ark.** zafiyet etkisini ve yayılım dinamiklerini inceler [18]; **Cogo** bakım fenomenlerini (downgrade, aynı gün sürüm, deprecation) madenciler [22]; **Ahlstrom** gereksiz/test bağımlılıklarının budanmasının lisans ve güvenlik risklerini dramatik azalttığını gösterir [9]; **Jaisri/Reid/Kula** bağımlılıksız (self-contained) paket dinamiklerini haritalar [2]. Bu sinyaller tek başına kritik düğüm seçimi için yeterli değildir; biz bunları topolojik merkeziyet ve kullanım yoğunluğu ile **tek bir skor**da bütünleştiriyoruz.
+
+Politika ve bütünlük ekseninde **in-toto** uçtan uca zincir bütünlüğü sağlar [13]; imza benimsemesini etkileyen faktörler ve politika/araç etkisi **Schorlemmer** tarafından ölçülür [21]; **SBOM** doğruluk/verimlilik iyileştirmeleri [3] ve repo/artifakt kimliği-doğrulama önerileri [27] “ne yapılmalı?”yı tanımlar. Ayrıca **source poisoning/NG saldırılar** için eğitim-araç-teknik eksenli savunma hattı [6] ve zincir tehdit portresi [7] bağlamsal çerçeve sunar. Bizim katkımız, “**önce kimde yapılmalı?**” sorusuna indirime dayalı çekirdekte **topolojik bir yatırım planı** ve **operasyonel öncelik listeleri** ile yanıt vermektir.
+
+**Özetle:** Tehdit taksonomileri ve vaka derlemeleri [4],[24],[28],[1],[12], ağ-topoloji kırılganlığı [20],[16],[25], doğru geçişli çözümleme [8], güçlü tespit boru hatları [19],[29],[14],[17],[23],[15],[11], bakım/güncellik sinyalleri [5],[10],[18],[22],[9],[2] ve politika/SBOM/bütünlük çerçeveleri [13],[21],[3],[27],[6],[7] olgunlaşmıştır. **Eksik olan**, popülerlik ve yapısal merkeziyetin indirime dayalı çekirdekte tek bir **operasyonel “kritiklik” ölçütünde** birleşmesi ve bu ölçütün tespit ile politika hatlarına **sıralı öncelik listeleri** olarak yansımasıdır. Biz, son 12 ay indirmelerine göre seçilen ilk 1000 npm bağımlılığı üzerinde, resmî çözümleme kurallarıyla kurulan yönlendirilmiş grafı kullanarak; topolojik ölçüler + kullanım yoğunluğu + bakım/güncellik sinyallerini kaynaştıran **Bileşik Kritiklik Skoru**’nu tanımlıyor ve skoru hedefli/rasgele düğüm çıkarma deneyleriyle (erişilebilirlik, LCC, ortalama yol, işlevsel kapsama kayıpları) **kalibre** ediyoruz. Böylece tespit sistemleri için **öncelikli tarama kuyruğu**, bakım ve güvenlik politikaları için **hedef paket listeleri** ve ekosistem yönetişimi için **risk-temelli müdahale planları** üretilebilmektedir.
 
 ---
 
@@ -22,6 +33,7 @@ Açık kaynaklı paket yöneticileri (örneğin, Node.js için npm), modern yaz�
 
 ---
 
+
 ## 2. A Preliminary Study on Self-Contained Libraries in the NPM Ecosystem
 
 - **Authors / Yazarlar:** Pongchai Jaisri; Reid, Brittany; Kula, Raula Gaikovina
@@ -37,7 +49,6 @@ The widespread of libraries within modern software ecosystems creates complex ne
 **Özet (TR):**
 Modern yazılım ekosistemlerinde kütüphanelerin yaygınlaşması, karmaşık bağımlılık ağları oluşturmaktadır. Bu bağımlılıklar kırılgan, eski veya gereksizdir ve bağımlı kütüphanelerde zincirleme sorunlara yol açabilir. Bir hafifletme stratejisi, bağımlılıkları azaltmaktır; sıfır bağımlılığa sahip kütüphaneler kendi kendine yeten hale gelir. Bu makale, NPM ekosistemindeki kendi kendine yeten kütüphanelerin özelliklerini incelemektedir. 2763 NPM kütüphanesinden oluşan bir veri setini analiz ederek, bunların %39,49'unun kendi kendine yeten olduğunu tespit ettik. Bu kendi kendine yeten kütüphanelerin %40,42'si daha önce bağımlılıklara sahipti, ancak bunlar daha sonra kaldırıldı. Bu analiz, NPM ekosisteminde bağımlılıkların önemli ölçüde azaldığına işaret ediyor. En sık kaldırılan bağımlılık babel-runtime idi. Araştırmamız, bağımlılıkların kaldırılmasının başlıca nedenlerinin, bağımlılığın performansı ve boyutu ile ilgili endişeler olduğunu göstermektedir. Bulgularımız, bağımsız kütüphanelerin doğasını ve kökenlerini aydınlatarak, yazılım geliştirme uygulamalarına rehberlik edecek değerli bilgiler sunmaktadır.
 
----
 
 ## 3. Accurate and Efficient SBOM Generation for Software Supply Chain Security
 
@@ -124,24 +135,7 @@ Yazılım endüstrisinin hızlı büyümesi ile birlikte, yazılım tedarik zinc
 
 ---
 
-## 8. Demystifying the Vulnerability Propagation and Its Evolution via Dependency Trees in the NPM Ecosystem
-
-- **Authors / Yazarlar:** Liu, Chengwei; Chen, Sen; Fan, Lingling; Chen, Bihuan; Liu, Yang; Peng, Xin
-- **Year / Yıl:** 2022
-- **Type / Tür:** Working Papers
-- **Keywords / Anahtar Kelimeler:** Software Engineering
-- **URL / Bağlantı:** https://www.proquest.com/working-papers/demystifying-vulnerability-propagation-evolution/docview/2619058800/se-2?accountid=25087
-- **Database / Veritabanı:** Publicly Available Content Database
-
-**Abstract (EN):**
-Third-party libraries with rich functionalities facilitate the fast development of Node.js software, but also bring new security threats that vulnerabilities could be introduced through dependencies. In particular, the threats could be excessively amplified by transitive dependencies. Existing research either considers direct dependencies or reasoning transitive dependencies based on reachability analysis, which neglects the NPM-specific dependency resolution rules, resulting in wrongly resolved dependencies. Consequently, further fine-grained analysis, such as vulnerability propagation and their evolution in dependencies, cannot be carried out precisely at a large scale, as well as deriving ecosystem-wide solutions for vulnerabilities in dependencies. To fill this gap, we propose a knowledge graph-based dependency resolution, which resolves the dependency relations of dependencies as trees (i.e., dependency trees), and investigates the security threats from vulnerabilities in dependency trees at a large scale. We first construct a complete dependency-vulnerability knowledge graph (DVGraph) that captures the whole NPM ecosystem (over 10 million library versions and 60 million well-resolved dependency relations). Based on it, we propose DTResolver to statically and precisely resolve dependency trees, as well as transitive vulnerability propagation paths, by considering the official dependency resolution rules. Based on that, we carry out an ecosystem-wide empirical study on vulnerability propagation and its evolution in dependency trees. Our study unveils lots of useful findings, and we further discuss the lessons learned and solutions for different stakeholders to mitigate the vulnerability impact in NPM. For example, we implement a dependency tree based vulnerability remediation method (DTReme) for NPM packages, and receive much better performance than the official tool (npm audit fix).
-
-**Özet (TR):**
-Zengin işlevlere sahip üçüncü taraf kütüphaneler, Node.js yazılımının hızlı geliştirilmesini kolaylaştırır, ancak bağımlılıklar yoluyla güvenlik açıklarının ortaya çıkabileceği yeni güvenlik tehditleri de beraberinde getirir. Özellikle, bu tehditler geçişli bağımlılıklar tarafından aşırı derecede büyütülebilir. Mevcut araştırmalar, doğrudan bağımlılıkları veya erişilebilirlik analizine dayalı geçişli bağımlılıkları ele almaktadır, ancak bu, NPM'ye özgü bağımlılık çözümleme kurallarını göz ardı ederek bağımlılıkların yanlış çözümlenmesine neden olmaktadır. Sonuç olarak, güvenlik açıklarının yayılması ve bağımlılıklardaki evrimleri gibi daha ayrıntılı analizler, bağımlılıklardaki güvenlik açıkları için ekosistem çapında çözümler türetmek gibi, büyük ölçekte kesin olarak gerçekleştirilemez. Bu boşluğu doldurmak için, bağımlılıkların bağımlılık ilişkilerini ağaçlar (yani bağımlılık ağaçları) olarak çözen ve bağımlılık ağaçlarındaki güvenlik açıklarından kaynaklanan güvenlik tehditlerini büyük ölçekte araştıran, bilgi grafiği tabanlı bir bağımlılık çözümü öneriyoruz. İlk olarak, tüm NPM ekosistemini (10 milyondan fazla kütüphane sürümü ve 60 milyondan fazla iyi çözülmüş bağımlılık ilişkisi) kapsayan eksiksiz bir bağımlılık-güvenlik açığı bilgi grafiği (DVGraph) oluşturuyoruz. Buna dayanarak, resmi bağımlılık çözümleme kurallarını dikkate alarak bağımlılık ağaçlarını ve geçişli güvenlik açığı yayılma yollarını statik ve hassas bir şekilde çözmek için DTResolver'ı öneriyoruz. Buna dayanarak, bağımlılık ağaçlarında güvenlik açığı yayılımı ve evrimi üzerine ekosistem çapında ampirik bir çalışma yürütüyoruz. Çalışmamız birçok yararlı bulguyu ortaya koyuyor ve NPM'deki güvenlik açığı etkisini azaltmak için farklı paydaşlar için çıkarılan dersleri ve çözümleri daha ayrıntılı olarak tartışıyoruz. Örneğin, NPM paketleri için bağımlılık ağacı tabanlı bir güvenlik açığı giderme yöntemi (DTReme) uyguluyoruz ve resmi araçtan (npm audit fix) çok daha iyi performans elde ediyoruz.
-
----
-
-## 9. Demystifying Vulnerability Propagation via Dependency Trees in npm
+## 8. Demystifying Vulnerability Propagation via Dependency Trees in npm
 
 - **Authors / Yazarlar:** Liu, C., Chen, S., et al.
 - **Year / Yıl:** 2022
@@ -157,9 +151,44 @@ To fill this gap, we propose a knowledge graph-based dependency resolution, whic
 Zengin işlevlere sahip üçüncü taraf kütüphaneler, JavaScript yazılımının hızlı geliştirilmesini kolaylaştırarak NPM ekosisteminin patlayıcı bir büyüme göstermesine yol açmaktadır. Ancak bu durum, üçüncü taraf kütüphanelerden gelen bağımlılıklar yoluyla güvenlik açıklarının ortaya çıkması gibi yeni güvenlik tehditlerini de beraberinde getirmektedir. Özellikle, geçişli bağımlılıklar bu tehditleri aşırı derecede artırabilmektedir. Mevcut araştırmalar, yalnızca doğrudan bağımlılıkları veya erişilebilirlik analizine dayalı geçiş bağımlılıklarını dikkate almaktadır. Bu da, gerçek kurulum sırasında uyarlanan NPM'ye özgü bağımlılık çözümleme kurallarını göz ardı ederek, bağımlılıkların yanlış bir şekilde çözümlenmesine yol açmaktadır. Sonuç olarak, bağımlılıklardaki hassas güvenlik açıklarının yayılması ve zaman içindeki evrimi gibi daha ayrıntılı analizler, büyük ölçekte hassas bir şekilde gerçekleştirilememekte ve bağımlılıklardaki güvenlik açıkları için ekosistem çapında çözümler türetilememektedir.
 
 Bu boşluğu doldurmak için, bağımlılıkların iç bağımlılık ilişkilerini ağaçlar (yani bağımlılık ağaçları) olarak çözen ve bağımlılık ağaçlarındaki güvenlik açıklarından kaynaklanan güvenlik tehditlerini büyük ölçekte araştıran, bilgi grafiği tabanlı bir bağımlılık çözümü öneriyoruz. Özellikle, önce tüm NPM ekosistemini (10 milyondan fazla kütüphane sürümü ve 60 milyondan fazla iyi çözülmüş bağımlılık ilişkisi) kapsayan eksiksiz bir bağımlılık-güvenlik açığı bilgi grafiği (DVGraph) oluşturuyoruz. Buna dayanarak, resmi bağımlılık çözümleme kurallarını dikkate alarak her paket için bağımlılık ağaçlarını ve geçişli güvenlik açığı yayılma yollarını statik ve kesin olarak çözmek için yeni bir algoritma (DTResolver) öneriyoruz. Buna dayanarak, bağımlılık ağaçlarında güvenlik açığı yayılımı ve evrimi üzerine ekosistem çapında ampirik bir çalışma yürütüyoruz. Çalışmamız birçok yararlı bulguyu ortaya koyuyor ve bulgularımıza dayanarak NPM'deki güvenlik açığı etkisini azaltmak için farklı paydaşlar için çıkarılan dersleri ve çözümleri daha ayrıntılı olarak tartışıyoruz. Örneğin, NPM paketleri için bağımlılık ağacı tabanlı bir güvenlik açığı giderme yöntemi (DTReme) uyguluyoruz ve resmi araçtan (npm audit fix) çok daha iyi performans elde ediyoruz.
+
 ---
 
-## 10. Detection of Software Supply Chain Attacks in Code Repositories
+## 9. Dependency Analysis for Software Licensing and Security
+
+* **Authors / Yazarlar:** Ahlstrom, Hannah Elizabeth
+* **Year / Yıl:** 2025
+* **Type / Tür:** Dissertations & Theses (Doctoral)
+* **Keywords / Anahtar Kelimeler:** License compliance, Security, Dependency pruning, Maven/Gradle
+* **URL / Bağlantı:** [https://www.proquest.com/dissertations-theses/dependency-analysis-software-licensing-security/docview/3199246675/se-2](https://www.proquest.com/dissertations-theses/dependency-analysis-software-licensing-security/docview/3199246675/se-2)
+* **Database / Veritabanı:** ProQuest Dissertations & Theses Global
+
+**Abstract (EN):**
+This dissertation investigates how non-distributed and test-scoped dependencies inflate legal and security risk. Using full dependency tree analysis across 514 OSS projects (Maven/Gradle), it proposes pruning unused, non-invoked, and test-only dependencies. The approach reduces license conflicts by **86–94%** and known vulnerabilities by **57–91%**, while substantially lowering the dependency count. The work demonstrates that risk exposure is often driven by artifacts not present in production deliverables and provides actionable guidance for dependency governance.
+
+**Özet (TR):**
+Bu tez, dağıtıma girmeyen ve test kapsamlı bağımlılıkların hukukî ve güvenlik riskini nasıl artırdığını inceler. 514 OSS proje (Maven/Gradle) üzerinde tam ağaç analizi yapılarak çağrılmayan, kullanılmayan ve yalnızca test amaçlı bağımlılıkların budanması önerilir. Yaklaşım, lisans uyumsuzluklarını **%86–94**, bilinen zafiyetleri **%57–91** oranında azaltırken bağımlılık sayısını kayda değer biçimde düşürür. Bulgular, risk maruziyetinin çoğu zaman üretim dağıtımına girmeyen artifaktlardan kaynaklandığını gösterir ve bağımlılık yönetişimi için uygulanabilir öneriler sunar.
+
+---
+
+## 10. Dependency Practices for Vulnerability Mitigation
+
+* **Authors / Yazarlar:** Abbas Javan Jafari; Costa, D. E.; Abdellatif, A.; Shihab, E.
+* **Year / Yıl:** 2023
+* **Type / Tür:** Working Paper (arXiv preprint)
+* **Keywords / Anahtar Kelimeler:** npm, Vulnerability response, Prediction model, Propagation
+* **URL / Bağlantı:** [http://arxiv.org/abs/2310.07847](http://arxiv.org/abs/2310.07847)
+* **Database / Veritabanı:** arXiv
+
+**Abstract (EN):**
+The paper introduces two update metrics—**TOOD** (Time-Out-Of-Date) and **PFET** (Post-Fix-Exposure-Time)—to quantify how promptly packages update dependencies and adopt security fixes. Leveraging an algorithm that stabilizes dependency relations over time, the authors analyze more than **2.9M packages**, **66.8M versions**, and **26.8M** dependency edges across npm, PyPI, and Cargo. Results show PyPI updates general dependencies fastest, while Cargo adopts security fixes fastest. TOOO (general freshness) correlates with PFET (security freshness), indicating TOOD can proxy PFET in some settings. A predictive model and survey insights identify traits of fast adopters and packages that curb vulnerability propagation.
+
+**Özet (TR):**
+Çalışma, paketlerin bağımlılıkları ve güvenlik düzeltmelerini ne kadar hızlı benimsediğini ölçmek için iki güncellik metriği tanıtır: **TOOD** ve **PFET**. Zaman içinde bağımlılık ilişkilerini stabilize eden bir algoritma ile npm, PyPI ve Cargo genelinde **2,9M paket**, **66,8M sürüm** ve **26,8M** bağımlılık ilişkisi analiz edilir. Bulgular, genel bağımlılık güncellemede **PyPI**’ın, güvenlik düzeltmelerini benimsemede ise **Cargo**’nun önde olduğunu gösterir. TOOD ile PFET arasında anlamlı ilişki bulunur; bazı durumlarda TOOD, PFET’in vekili olarak kullanılabilir. Ayrıca tahmin modeli ve anket bulguları, hızlı benimseyenlerin özelliklerini ve zafiyet yayılımını frenleyen paketleri ortaya koyar.
+
+---
+
+## 11. Detection of Software Supply Chain Attacks in Code Repositories
 
 - **Authors / Yazarlar:** Correia, Miguel Luís Pereira
 - **Year / Yıl:** 2022
@@ -172,26 +201,10 @@ Nowadays, the supply chain concept is something intrinsically deep-rooted in the
 
 **Özet (TR):**
 Günümüzde, tedarik zinciri kavramı, yazılım geliştirme yaşam döngüsünde içsel olarak köklü bir kavramdır; yazılımın kaynak kodundan ve yazılımın içine eklenen bağımlılıklardan, yazılımın piyasaya sürülmesine kadar. Geliştirme sürecinde güvenliği sola kaydırma ihtiyacının artmasıyla birlikte, yazılımı etkileyen her adım ve materyalin güvenliği sağlanmalıdır. Ancak, yazılım tedarik zincirindeki tüm aşamalar korunmamaktadır ve kötü niyetli aktörler bu güvenlik eksikliğini, yazılım kod depolarına kötü amaçlı kodlar eklemek için kullanmaktadır. Hesap ele geçirmeleri yoluyla saldırganlar, kod depolarına girebilir ve titiz bir planlama ile trojanize yazılımlar oluşturabilirler. 2019 SolarWinds saldırısı, tedarik zinciri saldırılarının ne kadar geniş bir etkiye sahip olabileceğini gösteren mükemmel bir örnektir. Bu tez, depolardaki kötü niyetli eylemlerin geliştiricilerin davranışları içindeki anomaliler olarak nasıl sınıflandırılabileceğini sunmaktadır. Kullanıcıların depolardaki eylemlerinden metrikler hesaplanır ve davranış profilleri oluşturmak için kullanılır, bu profiller daha sonra anormal davranışları tespit etmek için kullanılır.
----
-
-## 11. Distributed Software Build Assurance for Software Supply Chain Integrity
-
-- **Authors / Yazarlar:** Lew, Ken; Sarker, Arijet; Wuthier, Simeon; Kim, Jinoh; Kim, Jonghyun; Sang-Yoon, Chang
-- **Year / Yıl:** 2024
-- **Type / Tür:** Scholarly Journals
-- **Keywords / Anahtar Kelimeler:** software supply chain , assurance , software integrity , applied cryptography , blockchain
-- **URL / Bağlantı:** https://www.proquest.com/scholarly-journals/distributed-software-build-assurance-supply-chain/docview/3120540867/se-2?accountid=25087
-- **Database / Veritabanı:** Publicly Available Content Database
-
-**Abstract (EN):**
-Computing and networking are increasingly implemented in software. We design and build a software build assurance scheme detecting if there have been injections or modifications in the various steps in the software supply chain, including the source code, compiling, and distribution. Building on the reproducible build and software bill of materials (SBOM), our work is distinguished from previous research in assuring multiple software artifacts across the software supply chain. Reproducible build, in particular, enables our scheme, as our scheme requires the software materials/artifacts to be consistent across machines with the same operating system/specifications. Furthermore, we use blockchain to deliver the proof reference, which enables our scheme to be distributed so that the assurance beneficiary and verifier are the same, i.e., the node downloading the software verifies its own materials, artifacts, and outputs. Blockchain also significantly improves the assurance efficiency. We first describe and explain our scheme using abstraction and then implement our scheme to assure Ethereum as the target software to provide concrete proof-of-concept implementation, validation, and experimental analyses. Our scheme enables more significant performance gains than relying on a centralized server thanks to the use of blockchain (e.g., two to three orders of magnitude quicker in verification) and adds small overheads (e.g., generating and verifying proof have an overhead of approximately one second, which is two orders of magnitude smaller than the software download or build processes).
-
-**Özet (TR):**
-Bilgisayar ve ağ teknolojileri yazılımda giderek daha fazla kullanılıyor. Kaynak kodu, derleme ve dağıtım dahil olmak üzere yazılım tedarik zincirinin çeşitli aşamalarında enjeksiyon veya değişiklik olup olmadığını tespit eden bir yazılım derleme güvence sistemi tasarlıyor ve geliştiriyoruz. Tekrarlanabilir derleme ve yazılım malzeme listesi (SBOM) üzerine inşa edilen çalışmamız, yazılım tedarik zinciri genelinde birden fazla yazılım artefaktını güvence altına alma konusunda önceki araştırmalardan ayrılıyor. Özellikle tekrarlanabilir yapı, şemamızı mümkün kılar, çünkü şemamız, yazılım malzemelerinin/ürünlerinin aynı işletim sistemi/özelliklere sahip makineler arasında tutarlı olmasını gerektirir. Ayrıca, kanıt referansını sunmak için blok zinciri kullanıyoruz. Bu, şemamızın dağıtılmasını sağlar, böylece güvence yararlanıcısı ve doğrulayıcı aynı olur, yani yazılımı indiren düğüm kendi malzemelerini, ürünlerini ve çıktılarını doğrular. Blok zinciri ayrıca güvence verimliliğini önemli ölçüde artırır. Öncelikle, soyutlama kullanarak planımızı açıklayıp anlatıyoruz, ardından planımızı Ethereum'u hedef yazılım olarak güvence altına almak için uyguluyoruz ve somut kavram kanıtı uygulaması, doğrulama ve deneysel analizler sunuyoruz. Şemamız, blok zinciri kullanımı sayesinde merkezi bir sunucuya güvenmekten daha önemli performans kazançları sağlar (örneğin, doğrulamada iki ila üç kat daha hızlıdır) ve küçük ek yükler ekler (örneğin, kanıt oluşturma ve doğrulama yaklaşık bir saniyelik bir ek yüke sahiptir, bu da yazılım indirme veya derleme işlemlerinden iki kat daha azdır).
 
 ---
 
-## 12. Empirical Study on Exploitation of Dependency-Based Attacks in Node.Js
+## 12. Empirical Study on Dependency-Based Attacks in Node.js
 
 - **Authors / Yazarlar:** Kang Yip, Danny Yi
 - **Year / Yıl:** 2022
@@ -310,22 +323,7 @@ Açık kaynaklı yazılımlara olan ilginin artması, npm ve RubyGems gibi yenid
 
 ---
 
-## 19. On the Impact of Security Vulnerabilities in the npm Dependency Network
-
-- **Authors / Yazarlar:** Decan, A., Mens, T., et al.
-- **Year / Yıl:** 2018
-- **Type / Tür:** Konferans (MSR 2018)
-- **Keywords / Anahtar Kelimeler:** Software repository mining, Security vulnerability, Dependency network, Semantic versioning
-
-**Abstract (EN):**
-Security vulnerabilities are among the most pressing problems in open source software package libraries. It may take a long time to discover and fix vulnerabilities in packages. In addition, vulnerabilities may propagate to dependent packages, making them vulnerable too. This paper presents an empirical study of nearly 400 security reports over a 6-year period in the npm dependency network containing over 610k JavaScript packages. Taking into account the severity of vulnerabilities, we analyse how and when these vulnerabilities are discovered and fixed, and to which extent they affect other packages in the packaging ecosystem in presence of dependency constraints. We report our findings and provide guidelines for package maintainers and tool developers to improve the process of dealing with security issues
-
-**Özet (TR):**
-Güvenlik açıkları, açık kaynaklı yazılım paket kütüphanelerinde en acil sorunlar arasındadır. Paketlerdeki güvenlik açıklarını keşfetmek ve düzeltmek uzun zaman alabilir. Ayrıca, güvenlik açıkları bağımlı paketlere de yayılabilir ve onları da savunmasız hale getirebilir. Bu makale, 610 binden fazla JavaScript paketi içeren npm bağımlılık ağında 6 yıllık bir dönemde yaklaşık 400 güvenlik raporunun ampirik bir çalışmasını sunmaktadır. Güvenlik açıklarının ciddiyetini dikkate alarak, bu güvenlik açıklarının nasıl ve ne zaman keşfedilip düzeltildiğini ve bağımlılık kısıtlamalarının varlığında paketleme ekosistemindeki diğer paketleri ne ölçüde etkilediğini analiz ediyoruz. Bulgularımızı raporluyoruz ve paket bakımcıları ve araç geliştiricileri için güvenlik sorunlarıyla başa çıkma sürecini iyileştirmek için kılavuzlar sunuyoruz.
-
----
-
-## 20. Practical Automated Detection of Malicious npm Packages
+## 19. Practical Automated Detection of Malicious npm Packages (Amalfi)
 
 - **Authors / Yazarlar:** Sejfia, Adriana; Schäfer, Max
 - **Year / Yıl:** 2022
@@ -342,7 +340,7 @@ npm kayıt defteri, JavaScript ve TypeScript ekosistemlerinin temel taşlarında
 
 ---
 
-## 21. Small World with High Risks: A Study of Security Threats in the npm Ecosystem
+## 20. Small World with High Risks: Security Threats in npm
 
 - **Authors / Yazarlar:** Zimmermann, Markus; Cristian-Alexandru Staicu; Tenny, Cam; Pradel, Michael
 - **Year / Yıl:** 2019
@@ -359,7 +357,7 @@ JavaScript'in popülaritesi, npm yazılım paketi kayıt defteri aracılığıyl
 
 ---
 
-## 22. Software Supply Chain Security: Attacks, Defenses, And the Adoption of Signatures
+## 21. Software Supply Chain Security: Attacks, Defenses, and Signing Adoption
 
 - **Authors / Yazarlar:** Schorlemmer, Taylor R.
 - **Year / Yıl:** 2024
@@ -375,7 +373,7 @@ Modern yazılımlar, büyük ölçüde üçüncü taraf bağımlılıklarına (g
 
 ---
 
-## 23. Studying Dependency Maintenance Practices Through the Mining of Data from NPM Packages
+## 22. Studying Dependency Maintenance Practices through Mining NPM
 
 - **Authors / Yazarlar:** Cogo, Filipe Roseiro
 - **Year / Yıl:** 2020
@@ -392,24 +390,7 @@ Açık kaynaklı yazılım ekosistemleri son on yılda önemli bir önem kazanm�
 
 ---
 
-## 24. Studying Dependency Maintenance Practices Through the Mining of Data from NPM Packages
-
-- **Authors / Yazarlar:** Cogo, Filipe Roseiro
-- **Year / Yıl:** 2020
-- **Type / Tür:** Dissertations & Theses
-- **Keywords / Anahtar Kelimeler:** Open source software
-- **URL / Bağlantı:** https://www.proquest.com/dissertations-theses/studying-dependency-maintenance-practices-through/docview/2524882679/se-2?accountid=25087
-- **Database / Veritabanı:** ProQuest Dissertations & Theses Global
-
-**Abstract (EN):**
-Open source software ecosystems have gained significant importance in the last decade. In a software ecosystem, client packages can enable a dependency to reuse the functionalities of a provider package. On the one hand, the diversity of freely reusable provider packages in those ecosystems supports a fast-paced contemporary software development. On the other hand, developers need to cope with the overhead brought by dependency maintenance. Dependencies need to be kept in an updated and working state, otherwise defects from provider packages can negatively impact client packages. Notable incidents denote the importance of timely and proper dependency maintenance. For example, in the "Equifax data breach", a vulnerability coming from an out-of-date dependency was explored to illegally obtain hundreds of millions of financial customers information. Also, the "left-pad incident", in which a package with 11-lines of code was removed from npm, caused a significant downtime on major websites such as Facebook, Instagram and LinkedIn. Hence, proper dependency maintenance contributes to the viability of both individual packages and the whole ecosystem. In this thesis, we propose to leverage data from the npm ecosystem to understand the current dependency maintenance practices and provide actionable information to practitioners. Currently, npm is the largest and most popular open-source software ecosystem. We study three phenomena related to the dependency maintenance in software ecosystems: downgrade of dependencies, same-day releases, and releases deprecation. In this thesis, we discuss in detail the motivation and approach to study these three phenomena. We then perform an empirical analysis of the npm data to evaluate the driving forces behind these phenomena, as well as their prevalence and impact in the ecosystem. Based on our empirical observations, we propose a set of informed suggestions to improve dependency maintenance practices in npm.
-
-**Özet (TR):**
-Açık kaynaklı yazılım ekosistemleri son on yılda önemli bir önem kazanmıştır. Bir yazılım ekosisteminde, istemci paketleri bir bağımlılığın sağlayıcı paketinin işlevlerini yeniden kullanmasını sağlayabilir. Bir yandan, bu ekosistemlerdeki serbestçe yeniden kullanılabilir sağlayıcı paketlerinin çeşitliliği, hızlı tempolu çağdaş yazılım geliştirmeyi desteklemektedir. Öte yandan, geliştiriciler bağımlılık bakımının getirdiği ek yükle başa çıkmak zorundadır. Bağımlılıklar güncel ve çalışır durumda tutulmalıdır, aksi takdirde sağlayıcı paketlerindeki kusurlar istemci paketlerini olumsuz etkileyebilir. Önemli olaylar, zamanında ve uygun bağımlılık bakımının önemini göstermektedir. Örneğin, “Equifax veri ihlali” olayında, güncel olmayan bir bağımlılıktan kaynaklanan bir güvenlik açığı, yüz milyonlarca finansal müşteri bilgisini yasadışı olarak elde etmek için kullanıldı. Ayrıca, 11 satırlık bir kod içeren bir paketin npm'den kaldırıldığı “left-pad olayı”, Facebook, Instagram ve LinkedIn gibi büyük web sitelerinde önemli bir kesintiye neden oldu. Bu nedenle, uygun bağımlılık bakımı hem bireysel paketlerin hem de tüm ekosistemin yaşayabilirliğine katkıda bulunur. Bu tezde, mevcut bağımlılık bakım uygulamalarını anlamak ve uygulayıcılara eyleme geçirilebilir bilgiler sağlamak için npm ekosisteminden elde edilen verileri kullanmayı öneriyoruz. Şu anda npm, en büyük ve en popüler açık kaynaklı yazılım ekosistemidir. Yazılım ekosistemlerinde bağımlılık bakımıyla ilgili üç olguyu inceliyoruz: bağımlılıkların düşürülmesi, aynı gün sürümleri ve sürümlerin kullanımdan kaldırılması. Bu tezde, bu üç olguyu incelemek için motivasyon ve yaklaşımı ayrıntılı olarak tartışıyoruz. Ardından, bu olguların arkasındaki itici güçleri, yaygınlıklarını ve ekosistemdeki etkilerini değerlendirmek için npm verilerinin ampirik analizini gerçekleştiriyoruz. Ampirik gözlemlerimize dayanarak, npm'deki bağımlılık bakım uygulamalarını iyileştirmek için bir dizi bilgilendirilmiş öneri sunuyoruz.
-
----
-
-## 25. Supporting the Detection of Software Supply Chain Attacks through Unsupervised Signature Generation
+## 23. Supporting Detection via Unsupervised Signature Generation (ACME)
 
 - **Authors / Yazarlar:** Ohm, Marc; Kempf, Lukas; Boes, Felix; Meier, Michael
 - **Year / Yıl:** 2021
@@ -426,7 +407,7 @@ Yazılım tedarik zinciri saldırılarında kullanılan Truva atı yazılım pak
 
 ---
 
-## 26. The Hitchhiker's Guide to Malicious Third-Party Dependencies
+## 24. The Hitchhiker's Guide to Malicious Third-Party Dependencies
 
 - **Authors / Yazarlar:** Ladisa, Piergiorgio; Sahin, Merve; Ponta, Serena Elisa; Rosa, Marco; Martinez, Matias; Barais, Olivier
 - **Year / Yıl:** 2023
@@ -443,7 +424,7 @@ Bazı programlama dillerinin artan popülaritesi, ekosistemlere özgü paket dep
 
 ---
 
-## 27. The Web of Dependencies: A Complex Network Analysis of the NPM
+## 25. The Web of Dependencies: A Complex Network Analysis of the NPM
 
 - **Authors / Yazarlar:** Emilie-Rose Oldnall
 - **Year / Yıl:** 2017
@@ -457,7 +438,7 @@ Açık kaynaklı yazılım geliştirme, yazılım paketleri arasında karmaşık
 
 ---
 
-## 28. Toward Secure Use of Open Source Dependencies
+## 26. Toward Secure Use of Open Source Dependencies
 
 - **Authors / Yazarlar:** Imtiaz, Nasif
 - **Year / Yıl:** 2023
@@ -473,7 +454,7 @@ Modern yazılımlar, yukarı akış bağımlılıkları olarak açık kaynak pak
 
 ---
 
-## 29. Towards Ensuring Integrity and Authenticity of Software Repositories
+## 27. Towards Ensuring Integrity and Authenticity of Software Repositories
 
 - **Authors / Yazarlar:** Vaidya, Sangat
 - **Year / Yıl:** 2022
@@ -494,7 +475,7 @@ Bu çalışmanın ilk bölümünde, yazılım geliştiricilerinin kod yönetimi 
 
 ---
 
-## 30. Towards Measuring Supply Chain Attacks on Package Managers for Interpreted Languages
+## 28. Towards Measuring Supply Chain Attacks on Package Managers
 
 - **Authors / Yazarlar:** Duan, Ruian; Alrawi, Omar; Ranjita Pai Kasturi; Elder, Ryan; Saltaformaggio, Brendan; Lee, Wenke
 - **Year / Yıl:** 2020
@@ -513,7 +494,7 @@ Yorumlanan dillere yönelik program analizi araçlarının uyarlanmasında karş
 
 ---
 
-## 31. Towards Robust Detection of Open Source Software Supply Chain Poisoning Attacks in Industry Environments
+## 29. Towards Robust Detection of OSS Supply Chain Poisoning (OSCAR)
 
 - **Authors / Yazarlar:** Zheng, Xinyi; Chen, Wei; Wang, Shenao; Zhao, Yanjie; Gao, Peiming; Zhang, Yuanchao; Wang, Kailong; Wang, Haoyu
 - **Year / Yıl:** 2024
@@ -530,19 +511,19 @@ Açık kaynak paket ekosistemlerindeki (özellikle NPM ve PyPI) üstel büyüme,
 
 ---
 
-## 32. What are Weak Links in the npm Supply Chain?
+## 30. Unveiling the Invisible: Prototype Pollution Gadgets via Dynamic Taint
 
-- **Authors / Yazarlar:** Zahan, Nusrat; Zimmermann, Thomas; Godefroid, Patrice; Murphy, Brendan; Maddila, Chandra; Williams, Laurie
-- **Year / Yıl:** 2022
-- **Type / Tür:** Working Papers
-- **Keywords / Anahtar Kelimeler:** Cryptography and Security , Computers and Society , Software Engineering
-- **URL / Bağlantı:** https://www.proquest.com/working-papers/what-are-weak-links-npm-supply-chain/docview/2612219742/se-2?accountid=25087
-- **Database / Veritabanı:** Publicly Available Content Database
+* **Authors / Yazarlar:** Shcherbakov, M.; Moosbrugger, P.; Balliu, M.
+* **Year / Yıl:** 2021 *(konferans yılına göre güncellenebilir)*
+* **Type / Tür:** Conference
+* **Keywords / Anahtar Kelimeler:** Prototype pollution, Dynamic taint analysis, JavaScript, Gadgets, Supply chain
 
 **Abstract (EN):**
-Modern software development frequently uses third-party packages, raising the concern of supply chain security attacks. Many attackers target popular package managers, like npm, and their users with supply chain attacks. In 2021 there was a 650% year-on-year growth in security attacks by exploiting Open Source Software's supply chain. Proactive approaches are needed to predict package vulnerability to high-risk supply chain attacks. The goal of this work is to help software developers and security specialists in measuring npm supply chain weak link signals to prevent future supply chain attacks by empirically studying npm package metadata. In this paper, we analyzed the metadata of 1.63 million JavaScript npm packages. We propose six signals of security weaknesses in a software supply chain, such as the presence of install scripts, maintainer accounts associated with an expired email domain, and inactive packages with inactive maintainers. One of our case studies identified 11 malicious packages from the install scripts signal. We also found 2,818 maintainer email addresses associated with expired domains, allowing an attacker to hijack 8,494 packages by taking over the npm accounts. We obtained feedback on our weak link signals through a survey responded to by 470 npm package developers. The majority of the developers supported three out of our six proposed weak link signals. The developers also indicated that they would want to be notified about weak links signals before using third-party packages. Additionally, we discussed eight new signals suggested by package developers.
+Prototype pollution (PP) has emerged as a pervasive class of JavaScript vulnerabilities that enables adversaries to tamper with `Object.prototype` and hijack program behavior. This paper presents a dynamic-taint–analysis approach to systematically uncover **PP gadgets**—execution contexts and code paths that make pollution exploitable in real applications and packages. The technique tracks attacker-controlled sources through property creation/propagation, models prototype lookups, and pinpoints sinks that yield privilege escalation, arbitrary write, or code-execution effects. Evaluated across popular npm packages and real-world apps, the approach reveals previously undocumented gadgets, shows how seemingly benign libraries can become exploitable under realistic inputs, and provides guidance for hardening package code and sanitizing merge/clone utilities.
 
 **Özet (TR):**
-Modern yazılım geliştirme süreçlerinde üçüncü taraf paketler sıkça kullanılmakta ve bu durum tedarik zinciri güvenliği saldırılarına ilişkin endişeleri artırmaktadır. Pek çok saldırgan, npm gibi popüler paket yöneticilerini ve bunların kullanıcılarını tedarik zinciri saldırılarıyla hedef almaktadır. 2021 yılında, Açık Kaynak Yazılımın (OSS) tedarik zincirinden yararlanılarak gerçekleştirilen güvenlik saldırılarında yıllık bazda %650’lik bir artış görülmüştür. Yüksek riskli tedarik zinciri saldırılarına karşı paketlerin kırılganlığını öngörebilmek için proaktif yaklaşımlara ihtiyaç vardır. Bu çalışmanın amacı, npm paket metadatasını ampirik olarak inceleyerek yazılım geliştiricilerin ve güvenlik uzmanlarının gelecekteki tedarik zinciri saldırılarını önleyebilmesi için npm tedarik zincirindeki zayıf halka sinyallerini ölçmesine yardımcı olmaktır. Bu makalede 1,63 milyon JavaScript npm paketinin metadatasını analiz ettik. Yazılım tedarik zincirinde güvenlik zayıflıklarını gösteren altı sinyal öneriyoruz; örneğin kurulum (install) betiklerinin varlığı, süresi dolmuş e-posta alan adlarıyla ilişkili bakımcı (maintainer) hesapları ve hem paketlerin hem de bakımcıların etkin olmadığı durumlar. Vaka çalışmalarımızdan birinde, kurulum betiklerine ilişkin sinyal sayesinde 11 kötü amaçlı paket tespit ettik. Ayrıca, süresi dolmuş alan adlarıyla ilişkili 2.818 bakımcı e-posta adresi bulduk; bu durum bir saldırganın söz konusu npm hesaplarını ele geçirerek 8.494 paketi kaçırmasını (hijack) mümkün kılmaktadır. Önerdiğimiz zayıf halka sinyallerine ilişkin geri bildirimi, 470 npm paket geliştiricisinin yanıtladığı bir anketle topladık. Geliştiricilerin çoğunluğu, önerdiğimiz altı zayıf halka sinyalinin üçüne destek verdi. Geliştiriciler ayrıca, üçüncü taraf paketleri kullanmadan önce zayıf halka sinyalleri konusunda bilgilendirilmek istediklerini belirtti. Ek olarak, paket geliştiricileri tarafından önerilen sekiz yeni sinyali de tartıştık.
+JavaScript’te **prototip kirliliği (PP)**, `Object.prototype` üzerinde oynama yoluyla program davranışının ele geçirilmesine imkân veren yaygın bir zafiyet sınıfıdır. Bu çalışma, gerçek uygulamalar ve paketlerde kirliliği sömürülebilir hâle getiren **PP araçlarını (gadget)** sistematik biçimde ortaya çıkarmak için **dinamik iz (taint) analizi** temelli bir yaklaşım sunar. Yöntem, saldırgan kontrollü girdileri özellik oluşturma/taşıma üzerinden izler, prototip aramalarını (lookup) modeller ve ayrıcalık yükseltme, keyfî yazma veya kod icrasına yol açan uç noktaları belirler. Popüler npm paketleri ve gerçek dünyadaki uygulamalar üzerinde yapılan değerlendirme; daha önce belgelenmemiş gadget’ları açığa çıkarır, masum görünen kütüphanelerin gerçekçi girdiler altında sömürülebilir olabileceğini gösterir ve paketlerin sertleştirilmesi ile merge/clone yardımcılarının temizlenmesine yönelik pratik öneriler sunar.
 
----
+**Bu çalışmaya katkısı / Relevance to this work:**
+PP riskinin **gerçek icra yolları** ile nasıl tetiklendiğini ortaya koyarak, **kritiklik skoru**nda “install/çalışma zamanı saldırı yüzeyi” sinyaline (örn. tehlikeli sink kalıpları, güvenli-olmayan merge/clone pratikleri) özellik seti sağlar.
+
