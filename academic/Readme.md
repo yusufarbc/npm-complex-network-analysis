@@ -523,7 +523,3 @@ Prototype pollution (PP) has emerged as a pervasive class of JavaScript vulnerab
 
 **Özet (TR):**
 JavaScript’te **prototip kirliliği (PP)**, `Object.prototype` üzerinde oynama yoluyla program davranışının ele geçirilmesine imkân veren yaygın bir zafiyet sınıfıdır. Bu çalışma, gerçek uygulamalar ve paketlerde kirliliği sömürülebilir hâle getiren **PP araçlarını (gadget)** sistematik biçimde ortaya çıkarmak için **dinamik iz (taint) analizi** temelli bir yaklaşım sunar. Yöntem, saldırgan kontrollü girdileri özellik oluşturma/taşıma üzerinden izler, prototip aramalarını (lookup) modeller ve ayrıcalık yükseltme, keyfî yazma veya kod icrasına yol açan uç noktaları belirler. Popüler npm paketleri ve gerçek dünyadaki uygulamalar üzerinde yapılan değerlendirme; daha önce belgelenmemiş gadget’ları açığa çıkarır, masum görünen kütüphanelerin gerçekçi girdiler altında sömürülebilir olabileceğini gösterir ve paketlerin sertleştirilmesi ile merge/clone yardımcılarının temizlenmesine yönelik pratik öneriler sunar.
-
-**Bu çalışmaya katkısı / Relevance to this work:**
-PP riskinin **gerçek icra yolları** ile nasıl tetiklendiğini ortaya koyarak, **kritiklik skoru**nda “install/çalışma zamanı saldırı yüzeyi” sinyaline (örn. tehlikeli sink kalıpları, güvenli-olmayan merge/clone pratikleri) özellik seti sağlar.
-
