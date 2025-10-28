@@ -75,13 +75,7 @@ python -m analysis.run --topN 200 --sample-k 200
 - Notebook kullanımı opsiyoneldir (`notebook`, `ipykernel`)
 
 ## Güvenlik Bağlamı: Eylül 2025 NPM Saldırısı
-Kısa özet:
-- Paket yönetim hesapları phishing ile ele geçirilerek 18 popüler pakete kötü kod enjekte edildi (chalk, debug, vb.).
-- Kötü kod tarayıcıda cüzdan API’lerini kancaladı, adres değiştirdi; milyarlarca indirme riske girdi.
-- Olay ~2 saat içinde bastırıldı; ekosistem riski geçişli bağımlılıklardan kaynaklandı.
-- Ardından “Shai‑Hulud” benzeri solucan yayılımı raporlandı; yüzlerce paketi etkiledi.
-
-Kısa özet (paragraf): Eylül 2025’te NPM’de, paket bakıcı hesaplarının phishing yoluyla ele geçirilmesiyle chalk ve debug dahil 18 popüler pakete kötü amaçlı kod enjekte edildi. Tarayıcıda çalışan kod cüzdan API’lerini kancalayarak adresleri değiştirdi ve milyarlarca indirimi risk altına soktu. Olay yaklaşık iki saat içinde tespit edilip durduruldu; etkilerin genişliği geçişli bağımlılık yapısından kaynaklandı. Sonrasında “Shai‑Hulud” benzeri bir solucan yayılımı raporlandı ve yüzlerce paketi etkiledi.
+Eylül 2025’te NPM’de, paket yönetim hesaplarının phishing yoluyla ele geçirilmesiyle chalk ve debug dahil 18 popüler pakete kötü amaçlı kod enjekte edildi. Tarayıcıda çalışan kod cüzdan API’lerini kancalayarak adresleri değiştirdi ve milyarlarca indirimi risk altına soktu. Olay yaklaşık iki saat içinde tespit edilip durduruldu; etkilerin genişliği geçişli bağımlılık yapısından kaynaklandı. Sonrasında “Shai‑Hulud” benzeri bir solucan yayılımı raporlandı ve yüzlerce paketi etkiledi.
 
 <details>
 <summary>Detaylı olay akışı, tablo ve kaynaklar</summary>
