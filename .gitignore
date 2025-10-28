@@ -2,6 +2,8 @@
 __pycache__/
 *.pyc
 .venv/
+.ruff_cache/
+.pytest_cache/
 
 # Jupyter
 .ipynb_checkpoints/
@@ -11,10 +13,25 @@ __pycache__/
 Thumbs.db
 .vscode/
 
-# LaTeX artifacts
-paper/*.aux
-paper/*.log
-paper/*.out
-paper/*.toc
-paper/*.synctex.gz
+# LaTeX artifacts (generic)
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.bbl
+*.blg
+
+# LaTeX artifacts (academic/)
+academic/*.aux
+academic/*.log
+academic/*.out
+academic/*.toc
+academic/*.synctex.gz
+academic/*.fls
+academic/*.fdb_latexmk
+academic/*.bbl
+academic/*.blg
 

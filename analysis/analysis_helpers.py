@@ -481,3 +481,15 @@ def save_cascade_impact(impact: Dict[str, int], out_path: Path) -> None:
         w.writerow(["package", "impacted_count"])
         for n, c in sorted(impact.items(), key=lambda kv: kv[1], reverse=True):
             w.writerow([n, int(c)])
+
+
+def save_edge_betweenness_topn(G: nx.DiGraph, top_n: int, out_path: Path) -> None:
+    """Edge betweenness centrality hesapla ve ilk N kenarı CSV olarak kaydet."""
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    eb = nx.edge_betweenness_centrality(G, normalized=True)
+    ranked = sorted(((u, v, s) for (u, v), s in eb.items()), key=lambda t: t[2], reverse=True)[: max(0, top_n)]
+    with out_path.open("w", newline="", encoding="utf-8") as f:
+        w = csv.writer(f)
+        w.writerow(["u", "v", "edge_betweenness"])
+        for u, v, s in ranked:
+            w.writerow([u, v, f"{float(s):.6f}"])

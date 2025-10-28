@@ -1,4 +1,9 @@
 networkx==3.2.1
 requests==2.32.3
 matplotlib>=3.8,<3.10
-scipy
+scipy>=1.10,<1.14
+numpy>=1.23,<2.0
+
+# Notebook kullanımını kolaylaştırmak için (opsiyonel)
+notebook>=7,<8
+ipykernel>=6.25,<7
