@@ -11,9 +11,6 @@ __pycache__/
 Thumbs.db
 .vscode/
 
-# Embedded repos
-npm-leaderboard/
-
 # LaTeX artifacts
 paper/*.aux
 paper/*.log
