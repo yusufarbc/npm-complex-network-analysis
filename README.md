@@ -1,6 +1,6 @@
 # NPM Complex Network Analysis
 
-NPM ekosistemindeki paketleri yönlü bir ağ olarak modeller ve merkeziyet metrikleriyle yapısal riski ölçer. Amaç, klasik zafiyet skorlarının ötesine geçerek, bir paketin ağ içindeki konumundan doğan sistemik riski görünür kılmaktır.
+NPM ekosistemindeki paketleri yönlü bir ağ olarak modeller ve merkeziyet metrikleriyle yapısal riski ölçer. Amaç, klasik zafiyet skorlarının ötesine geçerek bir paketin ağ içindeki konumundan doğan sistemik riski görünür kılmaktır.
 
 Canlı önizleme: https://yusufarbc.github.io/npm-complex-network-analysis/
 
@@ -12,10 +12,10 @@ Canlı önizleme: https://yusufarbc.github.io/npm-complex-network-analysis/
 - Kullanım (Notebook ve CLI)
 - Üretilen Çıktılar
 - Ortam ve Sürümler
-- Güvenlik Bağlamı
+- Güvenlik Bağlamı (özet)
 
 ## Amaç ve Kapsam
-Bu çalışma, popüler NPM paketlerinden yönlü bir bağımlılık ağı kurar; in-degree, out-degree ve betweenness merkeziyetlerini hesaplayıp min–max normalize ederek bileşik bir risk skoru üretir. Böylece, yalnızca paket içi zafiyetlere değil, bağımlılık topolojisinden kaynaklanan yapısal riske de odaklanır.
+Bu çalışma, popüler NPM paketlerinden yönlü bir bağımlılık ağı kurar; in-degree, out-degree ve betweenness merkeziyetlerini hesaplayıp min–max normalize ederek bileşik bir risk skoru üretir. Böylece yalnızca paket içi zafiyetlere değil, bağımlılık topolojisinden kaynaklanan yapısal riske de odaklanır.
 
 ## Kullanılan Metrikler ve Yöntemler
 - Ağ modeli
@@ -27,13 +27,12 @@ Bu çalışma, popüler NPM paketlerinden yönlü bir bağımlılık ağı kurar
   - betweenness centrality: Akışın “arasında olma” derecesi (köprü/kilit konumlar).
   - Betweenness büyük graflarda örnekleme ile hızlandırılabilir: `--sample-k`.
 - Normalizasyon ve bileşik risk
-  - Her metrik min–max normalize edilir: x' = (x - min) / (max - min).
-  - Risk formülü (varsayılan ağırlıklar):
-    - risk = 0.5·in' + 0.2·out' + 0.3·btw'
-    - Ağırlıklar CLI ile değiştirilebilir: `--risk-weights w_in,w_out,w_btw`.
+  - Her metrik min–max normalize edilir: x' = (x − min) / (max − min).
+  - Risk formülü (varsayılan ağırlıklar): risk = 0.5·in' + 0.2·out' + 0.3·btw'.
+  - Ağırlıklar CLI ile değiştirilebilir: `--risk-weights w_in,w_out,w_btw`.
 - Sınıflandırma (opsiyonel)
   - Kantil tabanlı ayrım: varsayılan eşikler 0.7 ve 0.9.
-  - Etiketler: Low (≤q1), Medium (q1..q2], High (>q2), çıktı: `classification.csv`.
+  - Etiketler: Low (≤q1), Medium (q1..q2], High (>q2). Çıktı: `classification.csv`.
 - Ek analizler
   - Edge betweenness: En yüksek köprü kenarlar (`edge_betweenness_top10.csv`).
   - Kaskad etki (ters yön dependents): Seçili tohumlar için etki sayısı (`cascade_impact_top20.csv`).
@@ -45,7 +44,7 @@ Bu çalışma, popüler NPM paketlerinden yönlü bir bağımlılık ağı kurar
 ## Proje Yapısı
 - `analysis/` — Notebook ve yardımcı Python kodlar (veri çekme, ağ kurma, metrikler, CLI)
 - `results/` — Üretilen CSV/JSON, görseller ve LaTeX tablolar
-- `academic/` — LaTeX rapor kaynakları ve PDF’ler
+- `academic/` — LaTeX rapor kaynakları ve PDF’ler (literatür taraması korunur)
 - `index.html` — Sonuçların statik sunumu (GitHub Pages)
 
 Detaylar: `analysis/README.md`, `results/README.md`.
