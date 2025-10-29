@@ -1,29 +1,54 @@
 # NPM Complex Network Analysis
 
-NPM ekosistemindeki paketleri yönlü bir ağ olarak modelleyip merkeziyet metrikleriyle yapısal riski ölçer. Amaç, klasik zafiyet skorlarının ötesine geçerek, bir paketin ağ içindeki konumundan doğan sistemik riski görünür kılmaktır.
+NPM ekosistemindeki paketleri yönlü bir ağ olarak modeller ve merkeziyet metrikleriyle yapısal riski ölçer. Amaç, klasik zafiyet skorlarının ötesine geçerek, bir paketin ağ içindeki konumundan doğan sistemik riski görünür kılmaktır.
 
 Canlı önizleme: https://yusufarbc.github.io/npm-complex-network-analysis/
 
 ## İçindekiler
 - Amaç ve Kapsam
+- Kullanılan Metrikler ve Yöntemler
 - Proje Yapısı
 - Hızlı Başlangıç
 - Kullanım (Notebook ve CLI)
 - Üretilen Çıktılar
 - Ortam ve Sürümler
-- Güvenlik Bağlamı: Eylül 2025 NPM Saldırısı
+- Güvenlik Bağlamı
 
 ## Amaç ve Kapsam
 Bu çalışma, popüler NPM paketlerinden yönlü bir bağımlılık ağı kurar; in-degree, out-degree ve betweenness merkeziyetlerini hesaplayıp min–max normalize ederek bileşik bir risk skoru üretir. Böylece, yalnızca paket içi zafiyetlere değil, bağımlılık topolojisinden kaynaklanan yapısal riske de odaklanır.
 
-## Proje Yapısı
-- `analysis/` – Notebook ve yardımcı Python kodları (veri çekme, ağ kurma, metrikler)
-- `results/` – Üretilen CSV/JSON, görseller ve LaTeX tabloları
-- `academic/` – LaTeX rapor kaynakları ve PDF’ler
-- `.github/` – GitHub Pages dağıtım iş akışı
-- `index.html` – Sonuçların statik sunumu (GitHub Pages)
+## Kullanılan Metrikler ve Yöntemler
+- Ağ modeli
+  - Düğümler paketleri, kenarlar Dependent → Dependency yönünü temsil eder.
+  - Self-loop ve çoklu kenar yoktur; grafik yönlüdür (DiGraph).
+- Metrikler
+  - in-degree: Kaç paket bu pakete bağlı (popüler çekirdeklerin izi).
+  - out-degree: Bu paket kaç bağımlılığa bağlı (kırılgan yüzeyin izi).
+  - betweenness centrality: Akışın “arasında olma” derecesi (köprü/kilit konumlar).
+  - Betweenness büyük graflarda örnekleme ile hızlandırılabilir: `--sample-k`.
+- Normalizasyon ve bileşik risk
+  - Her metrik min–max normalize edilir: x' = (x - min) / (max - min).
+  - Risk formülü (varsayılan ağırlıklar):
+    - risk = 0.5·in' + 0.2·out' + 0.3·btw'
+    - Ağırlıklar CLI ile değiştirilebilir: `--risk-weights w_in,w_out,w_btw`.
+- Sınıflandırma (opsiyonel)
+  - Kantil tabanlı ayrım: varsayılan eşikler 0.7 ve 0.9.
+  - Etiketler: Low (≤q1), Medium (q1..q2], High (>q2), çıktı: `classification.csv`.
+- Ek analizler
+  - Edge betweenness: En yüksek köprü kenarlar (`edge_betweenness_top10.csv`).
+  - Kaskad etki (ters yön dependents): Seçili tohumlar için etki sayısı (`cascade_impact_top20.csv`).
+  - Genel istatistikler: Düğüm/kenar sayısı, bileşenler, LCC çapı (`graph_stats.json`).
+- Önbellek ve dayanıklılık
+  - HTTP sorguları disk önbelleği ile azaltılır: `results/cache_deps.json`.
+  - Bağlantı hatalarında basit tekrarlar uygulanır.
 
-Detaylar: `analysis/README.md`, `results/README.md`, `academic/README.md`.
+## Proje Yapısı
+- `analysis/` — Notebook ve yardımcı Python kodlar (veri çekme, ağ kurma, metrikler, CLI)
+- `results/` — Üretilen CSV/JSON, görseller ve LaTeX tablolar
+- `academic/` — LaTeX rapor kaynakları ve PDF’ler
+- `index.html` — Sonuçların statik sunumu (GitHub Pages)
+
+Detaylar: `analysis/README.md`, `results/README.md`.
 
 ## Hızlı Başlangıç
 Önkoşul: Python 3.11.x (önerilen 3.11.9)
@@ -39,11 +64,11 @@ pip install -r analysis/requirements.txt
 ```
 3) Notebook’u aç (opsiyonel)
 ```
-python -m notebook  # analysis/analysis.ipynb’i açın
+python -m notebook  # analysis/analysis.ipynb dosyasını açın
 ```
 4) Tabloları (LaTeX) üret
 ```
-python results/make_tables.py
+python analysis/make_tables.py
 ```
 5) Sunumu görüntüle
 - Yerel: `index.html`
@@ -54,65 +79,39 @@ python results/make_tables.py
 - `analysis/analysis.ipynb` dosyasını açın, hücreleri sırayla çalıştırın; tüm çıktılar `results/` içine yazılır.
 
 ### CLI
-- Notebook olmadan üretim:
+Notebook olmadan üretim:
 ```
-python -m analysis.run --topN 200 --sample-k 200
+python -m analysis.run --topN 200 --sample-k 200 --classify
 ```
-- Opsiyonel: `--include-peer-deps` ile `peerDependencies`’i ekleyin.
+Seçenekler:
+- `--include-peer-deps` → `peerDependencies`’i de dahil et.
+- `--risk-weights 0.5,0.2,0.3` → risk ağırlıkları (in,out,btw).
+- `--quantiles 0.7,0.9` → sınıflandırma eşikleri.
+- `--edge-btw-topn 10` → en yüksek edge betweenness çıktısı.
+- `--cascade-topn 20` → kaskad etki için tohum sayısı.
 
 ## Üretilen Çıktılar
-- `results/edges.csv` – Kenar listesi (source=dependent, target=dependency)
-- `results/metrics.csv` – `package,in_degree,out_degree,betweenness,is_topN`
-- `results/risk_scores.csv` – Bileşik risk skoru + metrikler
-- `results/graph_stats.json` – Genel ağ istatistikleri
-- `results/edge_betweenness_top10.csv` – En yüksek köprü kenarlar
-- `results/cascade_impact_top20.csv` – Ters yön (dependents) kaskad etkisi
-- Görseller: `*.png/.svg`; Tablolar: `*.tex` (bkz. `results/make_tables.py`)
+- `results/edges.csv` — Kenar listesi (source=dependent, target=dependency)
+- `results/metrics.csv` — `package,in_degree,out_degree,betweenness,is_topN`
+- `results/risk_scores.csv` — Bileşik risk skoru + metrikler
+- `results/graph_stats.json` — Genel ağ istatistikleri
+- `results/edge_betweenness_top10.csv` — En yüksek köprü kenarlar
+- `results/cascade_impact_top20.csv` — Ters yön (dependents) kaskad etkisi
+- `results/classification.csv` — (opsiyonel) Low/Medium/High risk sınıfları
+- Görseller: `*.png/.svg`; Tablolar: `*.tex` (bkz. `analysis/make_tables.py`)
 
 ## Ortam ve Sürümler
 - Python: 3.11.x (önerilen 3.11.9)
 - NumPy: `>=1.23` (Python 3.11 uyumu için)
-- Notebook kullanımı opsiyoneldir (`notebook`, `ipykernel`)
+- Notebook kullanımı opsiyoneldir (`notebook`, `ipykernel`).
 
-## Güvenlik Bağlamı: Eylül 2025 NPM Saldırısı
-Eylül 2025’te NPM’de, paket yönetim hesaplarının phishing yoluyla ele geçirilmesiyle chalk ve debug dahil 18 popüler pakete kötü amaçlı kod enjekte edildi. Tarayıcıda çalışan kod cüzdan API’lerini kancalayarak adresleri değiştirdi ve milyarlarca indirimi risk altına soktu. Olay yaklaşık iki saat içinde tespit edilip durduruldu; etkilerin genişliği geçişli bağımlılık yapısından kaynaklandı. Sonrasında “Shai‑Hulud” benzeri bir solucan yayılımı raporlandı ve yüzlerce paketi etkiledi.
+## Güvenlik Bağlamı (özet)
+Eylül 2025’te NPM ekosisteminde, popüler paketlerin bakımcı hesaplarının phishing ile ele geçirilmesi sonucu kısa süreli kötü amaçlı sürümler yayımlandı (örnekler: chalk, debug). Olay, bağımlılık ağlarının geniş fan-out’u ve transit bağımlılıkların etkisi nedeniyle ekosistem genelinde yüksek risk potansiyeli taşıdı. Bu proje, benzer olaylarda “yapısal risk”i nicel olarak ortaya koymayı amaçlar.
 
-<details>
-<summary>Detaylı olay akışı, tablo ve kaynaklar</summary>
-
-Eylül 2025'te Node Package Manager (NPM) ekosistemi, tarihin en büyük tedarik zinciri saldırılarından birine maruz kaldı. Bu saldırı, phishing kampanyaları yoluyla paket bakıcılarının hesaplarının ele geçirilmesiyle başladı ve chalk, debug gibi popüler JavaScript paketlerine kötü amaçlı kod enjekte edilmesiyle devam etti. Saldırganlar, kripto para cüzdan adreslerini değiştirerek kullanıcıların fonlarını çalmayı hedefledi. Olay, açık kaynak yazılım ekosisteminin kırılganlığını bir kez daha gözler önüne serdi.
-
-Saldırı, 5 Eylül 2025'te "npmjs.help" adlı sahte bir alan adının kaydedilmesiyle hazırlık aşamasına girdi. Bu alan, resmi NPM destek sitesini taklit ederek paket bakıcılarına phishing e-postaları gönderdi. E-postalar, iki faktörlü kimlik doğrulama (2FA) sıfırlama talebi gibi görünüyor ve bakıcıları kullanıcı adı, şifre ve TOTP kodlarını paylaşmaya ikna ediyordu. En bilinen mağdur, "qix-" olarak bilinen geliştirici Josh Junon'du. Hesabı ele geçirildikten sonra, saldırganlar 8 Eylül 2025'te saat 13:16 UTC'de kötü amaçlı sürümleri yayınlamaya başladı. Bu sürümler, tarayıcı ortamında çalışan bir "crypto-stealer" veya "wallet-drainer" içeriyordu.
-
-Etkilenen paketler arasında chalk (konsol renklendirme), debug (hata ayıklama), ansi-styles (ANSI kodları işleme) gibi temel kütüphaneler yer alıyordu. Bu paketler, toplamda haftada 2.6 milyardan fazla indiriliyor ve birçok web uygulamasında geçişli bağımlılık olarak kullanılıyor. Saldırının mekanizması, kötü kodun tarayıcıya enjekte edilmesiyle başlıyordu: fetch, XMLHttpRequest ve cüzdan API'leri (örneğin window.ethereum, Solana API'leri) gibi işlevleri kancalıyor, ağ trafiğini izliyor ve kripto para adreslerini saldırganın kontrolündeki adreslerle değiştiriyordu. Desteklenen zincirler arasında Ethereum, Bitcoin, Solana, Tron, Litecoin ve Bitcoin Cash vardı. Kod, Levenshtein algoritması kullanarak benzer adresler üretiyor ve kullanıcı arayüzünde değişiklik yapmadan işlemi gizli tutuyordu. Ayrıca, veri hırsızlığı için hassas bilgileri exfiltre edebiliyordu.
-
-Zaman çizelgesi şöyleydi:
-- **5 Eylül 2025**: Sahte alan adı kaydedildi.
-- **8 Eylül 2025, 13:16 UTC**: Kötü amaçlı sürümler yayınlandı (örneğin chalk@5.6.1, debug@4.4.2).
-- **8 Eylül 2025, ~15:20 UTC**: Topluluk, GitHub'da şüpheli kodu fark etti ve uyarılar başladı.
-- **8 Eylül 2025, öğleden sonra**: Bakıcılar, kötü sürümleri kaldırdı ve temiz sürümleri yayınladı. Saldırı yaklaşık 2 saat sürdü.
-- **9-10 Eylül 2025**: Güvenlik firmaları (Palo Alto, Cycode) raporlar yayınladı.
-- **15 Eylül 2025**: "Shai-Hulud" adlı solucan benzeri bir gelişme ortaya çıktı; bu, saldırıdan esinlenerek kendi kendine çoğalan bir malware olup yüzlerce paketi etkiledi.
-- **23 Eylül 2025**: CISA, yaygın tedarik zinciri uyarısı yayınladı.
-
-Olayın genel etkisi büyük oldu: Potansiyel olarak milyonlarca geliştirici ve milyarlarca indirme etkilendi. Kripto kayıpları sınırlı kaldı (yaklaşık 503 USD rapor edildi), çünkü erken tespit edildi. Ancak ekosistem riski yüksekti; CI/CD hatlarında çökmelere neden oldu ve web3 uygulamalarını tehdit etti. Shai-Hulud solucanı, saldırıyı genişleterek 500'den fazla paketi enfekte etti ve geliştirici kimlik bilgilerini çalmayı hedefledi.
-
-#### Etkilenen Paketler ve Etkiler (özet tablo)
-
-| Paket Adı | Haftalık İndirme | Rol | Saldırı Etkisi |
-|---|---:|---|---|
-| ansi-styles | 371.4M | ANSI stil | Tarayıcı kancaları; veri hırsızlığı |
-| debug | 357.6M | Hata ayıklama | Cüzdan API’leri; işlem hijack’i |
-| chalk | 299.9M | Konsol renk | Ağ izleme; adres swap’i |
-| supports-color | 250M | Renk desteği | Tarayıcı entegrasyonuyla yayılım |
-| strip-ansi | 200M | ANSI temizleme | Veri exfiltrasyonu |
-| ... | ... | ... | ... |
-
-#### Haber ve Rapor Kaynakları (seçme)
+Seçme kaynaklar:
 - Palo Alto Networks: https://www.paloaltonetworks.com/blog/cloud-security/npm-supply-chain-attack/
 - CISA: https://www.cisa.gov/news-events/alerts/2025/09/23/widespread-supply-chain-compromise-impacting-npm-ecosystem
 - Trend Micro: https://www.trendmicro.com/en_us/research/25/i/npm-supply-chain-attack.html
 - Bleeping Computer: https://www.bleepingcomputer.com/news/security/hackers-hijack-npm-packages-with-2-billion-weekly-downloads-in-supply-chain-attack/
 - Trellix: https://www.trellix.com/blogs/research/npm-account-hijacking-and-the-rise-of-supply-chain-attacks/
 
-</details>
