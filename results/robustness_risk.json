@@ -1,44 +1,44 @@
 {
   "1": {
     "removed": [
-      "es-abstract"
+      "prop-types"
     ],
     "stats": {
-      "nodes": 1138.0,
-      "edges": 2100.0,
-      "components_count": 161.0,
-      "largest_component_size": 851.0,
-      "diameter_lcc": 15.0
+      "nodes": 2263.0,
+      "edges": 3645.0,
+      "components_count": 293.0,
+      "largest_component_size": 1807.0,
+      "diameter_lcc": 14.0
     }
   },
   "3": {
     "removed": [
-      "es-abstract",
-      "tslib",
-      "@babel/helper-plugin-utils"
+      "prop-types",
+      "@swc/helpers",
+      "@react-types/shared"
     ],
     "stats": {
-      "nodes": 1136.0,
-      "edges": 1980.0,
-      "components_count": 164.0,
-      "largest_component_size": 850.0,
-      "diameter_lcc": 15.0
+      "nodes": 2261.0,
+      "edges": 3426.0,
+      "components_count": 294.0,
+      "largest_component_size": 1804.0,
+      "diameter_lcc": 14.0
     }
   },
   "5": {
     "removed": [
-      "es-abstract",
-      "tslib",
-      "@babel/helper-plugin-utils",
-      "@smithy/types",
-      "call-bound"
+      "prop-types",
+      "@swc/helpers",
+      "@react-types/shared",
+      "@react-aria/utils",
+      "@babel/runtime"
     ],
     "stats": {
-      "nodes": 1134.0,
-      "edges": 1893.0,
-      "components_count": 165.0,
-      "largest_component_size": 848.0,
-      "diameter_lcc": 15.0
+      "nodes": 2259.0,
+      "edges": 3290.0,
+      "components_count": 304.0,
+      "largest_component_size": 1762.0,
+      "diameter_lcc": 14.0
     }
   }
 }

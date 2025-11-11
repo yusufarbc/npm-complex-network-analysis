@@ -1,8 +1,15 @@
+"""LaTeX uzun tabloları üretim yardımcıları (TR).
+
+`results/` dizinindeki CSV'lerden top listeleri oluşturarak longtable
+formatında `.tex` dosyaları üretir.
+"""
+
 import csv
 from pathlib import Path
 
 
 def _lt_begin(f, caption: str, cols: str, header_line: str) -> None:
+    """Longtable başlangıç bloğunu yaz (TR)."""
     f.write('\\begin{longtable}{' + cols + '}' + '\n')
     f.write('\\caption{' + caption + '}\\\\' + '\n')
     f.write('\\toprule' + '\n')
@@ -20,10 +27,12 @@ def _lt_begin(f, caption: str, cols: str, header_line: str) -> None:
 
 
 def _lt_end(f) -> None:
+    """Longtable bitişini yaz (TR)."""
     f.write('\\end{longtable}' + '\n')
 
 
 def write_metrics_top20_in(res: Path) -> bool:
+    """metrics.csv'den In-Degree'e göre ilk 20'yi uzun tablo olarak yaz (TR)."""
     mfile = res / 'metrics.csv'
     if not mfile.exists():
         return False
@@ -51,6 +60,7 @@ def write_metrics_top20_in(res: Path) -> bool:
 
 
 def write_risk_top20(res: Path) -> bool:
+    """risk_scores.csv'den en yüksek riskli ilk 20'yi uzun tablo olarak yaz (TR)."""
     rfile = res / 'risk_scores.csv'
     if not rfile.exists():
         return False
@@ -79,6 +89,7 @@ def write_risk_top20(res: Path) -> bool:
 
 
 def write_edge_betweenness_top10(res: Path) -> bool:
+    """Edge betweenness ilk 10'u uzun tablo olarak yaz (TR)."""
     p = res / 'edge_betweenness_top10.csv'
     if not p.exists():
         return False
@@ -104,6 +115,7 @@ def write_edge_betweenness_top10(res: Path) -> bool:
 
 
 def write_cascade_impact_top20(res: Path) -> bool:
+    """Kaskad etki (ters yön) ilk 20'yi uzun tablo olarak yaz (TR)."""
     p = res / 'cascade_impact_top20.csv'
     if not p.exists():
         return False
@@ -128,6 +140,7 @@ def write_cascade_impact_top20(res: Path) -> bool:
 
 
 def write_metrics_top20_out(res: Path) -> bool:
+    """metrics.csv'den Out-Degree'e göre ilk 20'yi uzun tablo olarak yaz (TR)."""
     mfile = res / 'metrics.csv'
     if not mfile.exists():
         return False
@@ -155,6 +168,7 @@ def write_metrics_top20_out(res: Path) -> bool:
 
 
 def write_metrics_top20_betweenness(res: Path) -> bool:
+    """metrics.csv'den Betweenness'e göre ilk 20'yi uzun tablo olarak yaz (TR)."""
     mfile = res / 'metrics.csv'
     if not mfile.exists():
         return False
@@ -182,6 +196,7 @@ def write_metrics_top20_betweenness(res: Path) -> bool:
 
 
 def main():
+    """results/ dizinindeki CSV'lerden LaTeX tablolarını üret (TR)."""
     res = Path('results')
     res.mkdir(exist_ok=True)
     ok1 = write_metrics_top20_in(res)
