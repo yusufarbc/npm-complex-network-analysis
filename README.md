@@ -44,6 +44,7 @@ python -m notebook  # analysis/analysis.ipynb dosyasını aç
 - `analysis/` — Notebook ve yardımcı Python kodlar (veri çekme, ağ kurma, metrikler)
 - `results/` — Üretilen CSV/JSON, görseller ve LaTeX tablolar
 - `academic/` — Literatür ve rapor materyali (bkz. `academic/topolojik-risk-degerlendirmesi.md`, `academic/Readme.md`)
+ - `academic/` — Literatür ve rapor materyali (bkz. `academic/LITERATURE_REVIEW.md`, `academic/topolojik-risk-degerlendirmesi.md`, `academic/Readme.md`)
 - `index.html` — Sonuçların statik sunumu (GitHub Pages)
 
 Detaylar: `analysis/README.md`, `results/README.md`.

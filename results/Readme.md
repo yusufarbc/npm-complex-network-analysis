@@ -93,6 +93,7 @@ Bu klasör, analysis/analysis.ipynb çalıştırıldığında üretilen veri dos
 - Gelecek: PageRank/eigenvector entegrasyonu; temporal ağ dinamikleri; topluluk yapılarının risk yayılımına etkisi.
 
 ## Daha Fazla Okuma
+- Ayrıntılı literatür taraması: `academic/LITERATURE_REVIEW.md`
 - Kavramsal arka plan ve geniş rapor: `academic/topolojik-risk-degerlendirmesi.md`
 - NPM Yazılım Tedarik Zinciri Saldırıları Raporu: `academic/Readme.md`
 
