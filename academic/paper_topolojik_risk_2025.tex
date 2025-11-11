@@ -60,9 +60,36 @@ Bu çalışmanın \textbf{özgün katkıları}:
 Kod ve özet sonuçlar: \url{https://yusufarbc.github.io/npm-complex-network-analysis/}
 
 \section{Literatür Taraması}
-Tehdit taksonomileri ve vaka derlemeleri (Backstabber’s Knife Collection; Hitchhiker’s Guide; yorumlanan dillerde kayıt suistimali) ekosistemler-arası kurulum/çalışma zamanı teknik haritasını sağlamlaştırır. NPM-odaklı pratik riskler ve fenomenler (Wyss; prototip kirliliği ve meta-suistimal çalışmaları) ekosistem davranışını ayrıntılandırır. Ağ bilimi cephesinde Zimmermann, Hafner ve Oldnall; küçük-dünya/ölçekten-bağımsız yapı ve hedefli düğüm çıkarımlarında kırılganlığı niceller. Doğru geçişli çözümleme hattı (DVGraph/DTResolver) resmi kurallara sadık kalarak transitive yayılımı hassas biçimde ortaya koyar. Tespit hattında Amalfi, Cerebro, OSCAR ve çapraz-dil yaklaşımlar güçlü sonuçlar üretir. Bakım/güncellik ekseninde TOOD/PFET, Cogo, Ahlstrom ve Imtiaz; güncellik, bakım pratikleri ve bildirim gecikmelerinin etkisini gösterir. Politika/bütünlük ekseninde in-toto, imza benimsemesi ve depo/artifakt kimliği-doğrulama önerileri “ne yapılmalı?”yı tanımlar. Eksik olan, popülerlik ve topolojik merkeziyetin indirime dayalı çekirdekte tek bir \emph{operasyonel kritiklik} ölçütünde birleşmesi ve bu ölçütün tespit ile politika hatlarına \emph{sıralı öncelik listeleri} olarak yansımasıdır.
+Bu bölüm, \texttt{academic/LITERATURE\_REVIEW.md} içeriğine dayanarak alanın durumunu ve boşlukları alt başlıklar halinde özetler.
+
+\subsection{Tehdit Taksonomileri ve Vaka Derlemeleri}
+Backstabber’s Knife Collection gerçek saldırı örneklerinden bir taksonomi çıkarır; The Hitchhiker’s Guide ekosistemler-arası kurulum/çalışma zamanı tekniklerini sistematize eder. Yorumlanan dillerde kayıt suistimali ve kurulum betikleriyle kötüye kullanım, geniş ölçekli riskin yayılım kanallarını doğrular. NPM-odaklı fenomenler (Wyss) kurulum zamanı saldırılar, klon kodlar, meta veride oltalama gibi pratik riskleri ortaya koyar.
+
+\subsection{Ağ-Topoloji Kırılganlığı}
+Zimmermann ve Hafner, hedefli düğüm çıkarımlarında kırılganlığı; Oldnall, küçük-dünya ve ölçekten-bağımsız mimariyi ve aşırı ters-bağımlılık kapsamlarını gösterir. Bulgular, az sayıda omurga paketin orantısız sistemik etki taşıdığını ve \emph{topoloji tabanlı önceliklendirme} gereğini vurgular.
+
+\subsection{Bağımlılık Çözümleme ve Yayılım}
+DVGraph/DTResolver hattı, NPM’in resmî çözüm kurallarına sadık kalarak geçişli ağaçları doğru inşa eder; bu sayede zafiyet propagasyonu ve evrimi yüksek ölçek ve isabetle çalışılabilir. Yanlış çözümlemenin, yayılım ve etki analizlerinde sapmaya yol açtığı gösterilmiştir.
+
+\subsection{Tespit Boru Hatları}
+Amalfi, Cerebro, çapraz-dil yaklaşımlar ve endüstride devreye alınan OSCAR; statik/dinamik ve davranış temelli tekniklerle güçlü sonuçlara ulaşır. Ancak sınırlı analist kapasitesi bağlamında \emph{hangi paketlerin önce taranacağı}na dair bir topolojik ön-filtre eksiktir.
+
+\subsection{Bakım/Güncellik Sinyalleri}
+TOOD/PFET metrikleri ekosistemler-arası güncellik farklarını ve güvenlik düzeltmesi benimseme hızlarını niceller. Cogo bakım fenomenlerini madenciler; Imtiaz, SCA araçlarının bildirim gecikmelerini ve phantom artifact sorunlarını belgelendirir; Ahlstrom, gereksiz/test bağımlılıklarının budanmasının dramatik risk azaltımı sağladığını gösterir.
+
+\subsection{Politika ve Bütünlük}
+in-toto uçtan uca bütünlük sağlar; imza benimsemesini etkileyen politika/araç dinamikleri ve depo/artifakt kimliği-doğrulama önerileri “ne yapılmalı?” alanını çizer. Bütünlük politikalarının hedefe yönelik yaygınlaştırılması için \emph{kritik düğüm listeleri} gereklidir.
+
+\subsection{Sentez ve Boşluk Analizi}
+Olgunlaşan hatlara karşın eksik kalan parçalar: (i) popülerlik (kullanım yoğunluğu) ile yapısal merkeziyetin tek bir \emph{operasyonel kritiklik} ölçütünde birleşmesi, (ii) bu ölçütün tespit/politika hatlarına \emph{sıralı öncelik listeleri} olarak yansıması. Bu çalışma, indirime dayalı çekirdekte \textbf{Bileşik Risk Skoru (BRS)}’nu tanımlayıp kalibre ederek bu boşluğu kapatır.
 
 \section{Yöntem}
+\subsection{Tehdit Modeli ve Varsayımlar}
+\textbf{Saldırgan yetenekleri:} (i) bağımlılıkların güncellenmesi sırasında paket içeriğini manipüle etme (sahiplik ele geçirme/malicious update), (ii) kurulum betikleri ve çalışma zamanı refleksiyonları kullanma, (iii) popüler bağımlılıkları hedefleyerek transitif etkiyi büyütme.\\
+\textbf{Savunma hedefleri:} (i) analist kapasitesini yüksek etkili düğümlere yönlendirme, (ii) bütünlük ve imza politikalarını en kritik omurgaya öncelikle yayma, (iii) ağ sağlamlığını artıracak bakım ve budama müdahalelerini hedefleme.
+
+\subsection{Ağırlıklandırma ve Kalibrasyon}
+BRS bileşen ağırlıkları \((w_{in},w_{out},w_{btw})=(0.5,0.2,0.3)\) başlangıç varsayımlarıyla belirlenmiş, \texttt{robustness\_risk.json} ile senaryo analizi yapılmıştır. Hedefli düğüm çıkarımı deneylerinde (erişilebilirlik, LCC, ortalama yol) farklı ağırlık setlerinin sıralama istikrarı test edilmiş, sonuçlar \emph{yüksek derecede kararlı} bulunmuştur.
 \subsection{Çalışma Tasarımı ve Parametreler}
 Analiz, en çok indirilen ilk \textbf{1000} NPM paketinin oluşturduğu yönlü bağımlılık ağı üzerinde yürütülmüştür. Kenarlar \emph{Dependent~$\to$~Dependency} yönündedir; self-loop yoktur. Betweenness için örnekleme (tipik \(k\!\approx\!200\)). Varsayılan veri kapsamı: \texttt{dependencies} (isteğe bağlı \texttt{peerDependencies}).
 
