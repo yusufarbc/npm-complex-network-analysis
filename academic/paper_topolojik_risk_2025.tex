@@ -22,7 +22,9 @@
 
 \geometry{margin=1.8cm}
 \hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
-\graphicspath{{../results/}}
+% Make figure lookup robust regardless of build CWD
+\graphicspath{{../results/}{results/}{./}{../}}
+\DeclareGraphicsExtensions{.png,.pdf,.jpg,.jpeg}
 \setkeys{Gin}{width=0.95\linewidth, keepaspectratio}
 \floatplacement{figure}{H}
 \floatplacement{table}{H}
@@ -188,7 +190,7 @@ react-aria-components & react-aria & 0.000009 \\
 \section{Yeniden Üretilebilirlik}
 \textbf{Çalışma ortamı.} Notebook tabanlı analiz (\texttt{analysis/analysis.ipynb}); Python 3, NetworkX, pandas, numpy, matplotlib/seaborn. Yalnızca not defteri üzerinden çalıştırma desteklidir.\\
 \textbf{Veri ve önbellek.} Top-N listesi ecosyste.ms/NPM Search/npms.io birleşik akışından; bağımlılıklar NPM registry üzerinden toplanır ve disk önbelleği ile hızlandırılır.\\
-\textbf{Parametreler.} Betweenness örnekleme \(k\!\approx\!200\); metrikler min–max ile ölçeklenir; ağırlıklar \(w_{in},w_{out},w_{btw})=(0.5,0.2,0.3).\\
+\textbf{Parametreler.} Betweenness örnekleme \(k\!\approx\!200\); metrikler min--max ile ölçeklenir; ağırlıklar \(\,(w_{in},w_{out},w_{btw})\!=\!(0.5,0.2,0.3)\,\).\\
 \textbf{Çıktılar.} \texttt{results/} altında CSV/JSON ve tüm görseller üretilir; \LaTeX\ makale \texttt{academic/} altında derlenir.
 
 \section{Sınırlılıklar ve Gelecek Çalışmalar}
