@@ -27,6 +27,8 @@
 \floatplacement{figure}{H}
 \floatplacement{table}{H}
 \captionsetup{font=small,labelfont=bf}
+% Avoid babel turkish active shorthand conflicts (e.g., '=') with URLs
+\AtBeginDocument{\shorthandoff{=}}
 % Ensure floats do not cross headings and appear after their definitions
 \preto\section{\FloatBarrier}
 \preto\subsection{\FloatBarrier}
@@ -196,23 +198,23 @@ react-aria-components & react-aria & 0.000009 \\
 Popülerlik ve yapısal merkeziyet, indirime dayalı çekirdekte \emph{Bileşik Risk Skoru} ile birleştirildiğinde, hem tespit hatları hem de politika/bütünlük mekanizmaları için eyleme dönük \emph{öncelik listeleri} üretmektedir. Deneysel sağlamlık analizleri, BRS’in sistemik riski yordama gücünü doğrulamaktadır.
 
 \section*{Kaynakça (Seçilmiş)}
-\begin{longtable}{@{}p{0.03\linewidth}p{0.94\linewidth}@{}}
-[1] & Wyss, E. (2025). A New Frontier for Software Security: Diving Deep Into npm.\\
-[2] & Jaisri, P.; Reid, B.; Kula, R. (2024). Self-Contained Libraries in NPM.\\
-[3] & Yu, S. (2024). Accurate and Efficient SBOM Generation.\\
-[4] & Ohm, M.; Plate, H.; Sykosch, A.; Meier, M. (2020). Backstabber’s Knife Collection.\\
-[5] & Rahman, I. et al. (2024). TOOD/PFET.\\
-[6] & Hastings, T. (2024). Combating Source Poisoning.\\
-[7] & Wang, M.; Wu, P.; Luo, Q. (2023). SSC Threat Portrait.\\
-[8] & Liu, C.; Chen, S. et al. (ICSE 2022). DVGraph/DTResolver.\\
-[9] & Ahlstrom, D. (2025). Bağımlılık Budama Etkileri.\\
-[10] & Imtiaz, N. (2023). Toward Secure Use of OSS Dependencies.\\
-[11] & Duan, R. et al. (2020). Measuring Supply Chain Attacks on Package Managers.\\
-[12] & Ladisa, P. et al. (2023). Hitchhiker’s Guide to Malicious Dependencies.\\
-[13] & Vaidya, S. (2022). Integrity and Authenticity of Software Repositories.\\
-[14] & OSCAR (2024). Robust Detection of OSS Supply Chain Poisoning.\\
-[15] & Shcherbakov, M. et al. (2021). Prototype Pollution Gadgets.\\
-[16] & Oldnall, E.-R. (2017). The Web of Dependencies: NPM.\\
+\begin{longtable}{@{}p{0.06\linewidth}p{0.91\linewidth}@{}}
+{}[1] & Wyss, E. (2025). A New Frontier for Software Security: Diving Deep Into npm.\\
+{}[2] & Jaisri, P.; Reid, B.; Kula, R. (2024). Self-Contained Libraries in NPM.\\
+{}[3] & Yu, S. (2024). Accurate and Efficient SBOM Generation.\\
+{}[4] & Ohm, M.; Plate, H.; Sykosch, A.; Meier, M. (2020). Backstabber’s Knife Collection.\\
+{}[5] & Rahman, I. et al. (2024). TOOD/PFET.\\
+{}[6] & Hastings, T. (2024). Combating Source Poisoning.\\
+{}[7] & Wang, M.; Wu, P.; Luo, Q. (2023). SSC Threat Portrait.\\
+{}[8] & Liu, C.; Chen, S. et al. (ICSE 2022). DVGraph/DTResolver.\\
+{}[9] & Ahlstrom, D. (2025). Bağımlılık Budama Etkileri.\\
+{}[10] & Imtiaz, N. (2023). Toward Secure Use of OSS Dependencies.\\
+{}[11] & Duan, R. et al. (2020). Measuring Supply Chain Attacks on Package Managers.\\
+{}[12] & Ladisa, P. et al. (2023). Hitchhiker’s Guide to Malicious Dependencies.\\
+{}[13] & Vaidya, S. (2022). Integrity and Authenticity of Software Repositories.\\
+{}[14] & OSCAR (2024). Robust Detection of OSS Supply Chain Poisoning.\\
+{}[15] & Shcherbakov, M. et al. (2021). Prototype Pollution Gadgets.\\
+{}[16] & Oldnall, E.-R. (2017). The Web of Dependencies: NPM.\\
 \end{longtable}
 
 \end{document}
