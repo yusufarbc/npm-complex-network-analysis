@@ -5,48 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>NPM Karmaşık Ağ Analizi — Sonuç Sunumu</title>
     <style>
-      :root {
-        --bg: #0f172a;
-        --panel: #111827;
-        --panel-2: #0b1220;
-        --text: #e5e7eb;
-        --muted: #9ca3af;
-        --accent: #7c3aed;
-        --accent-2: #22c55e;
-        --border: #1f2937;
-      }
-      * { box-sizing: border-box; }
-      html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font: 16px/1.55 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
-      a { color: #93c5fd; text-decoration: none; }
-      a:hover { text-decoration: underline; }
-      .wrap { max-width: 1100px; margin: 0 auto; padding: 32px 20px 60px; }
-      header { margin-bottom: 20px; }
-      h1 { font-size: 28px; margin: 0 0 6px; letter-spacing: 0.2px; }
-      .tag { display: inline-block; font-size: 12px; color: var(--muted); background: var(--panel); border: 1px solid var(--border); border-radius: 999px; padding: 2px 10px; margin-right: 8px; }
-      .lead { margin: 14px 0 10px; color: var(--muted); }
-
-      .hero { background: linear-gradient(140deg, rgba(124,58,237,0.2), rgba(34,197,94,0.1)); border: 1px solid var(--border); border-radius: 14px; padding: 16px 18px; margin: 22px 0 28px; }
-      .hero strong { color: #fff; }
-
-      h2 { font-size: 20px; margin: 26px 0 12px; }
-      h3 { font-size: 16px; margin: 16px 0 10px; color: var(--muted); font-weight: 600; }
-
-      .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
-      .card { background: linear-gradient(180deg, var(--panel), var(--panel-2)); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; }
-      .card-header { padding: 12px 14px; border-bottom: 1px solid var(--border); font-weight: 600; color: #fff; display: flex; align-items: center; gap: 8px; }
-      .card-body { padding: 12px 14px; color: var(--muted); }
-      .card-body p { margin: 0 0 10px; }
-      .art { background: #0a0f1c; padding: 8px; border-top: 1px solid var(--border); }
-      .art img, .art svg, .art picture { display: block; width: 100%; height: auto; border-radius: 8px; }
-      .links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
-      .chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; background: #0e1627; border: 1px solid var(--border); color: var(--text); font-size: 12px; }
-      .chip b { color: var(--accent-2); font-weight: 600; }
-      .muted { color: var(--muted); }
-      .footnote { font-size: 12px; color: var(--muted); margin-top: 10px; }
-      .list { background: linear-gradient(180deg, var(--panel), var(--panel-2)); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
-      .list ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
-      .list li { display: flex; justify-content: space-between; gap: 8px; }
-      .list code { color: #bfdbfe; }
+      :root { --bg:#0f172a; --panel:#111827; --panel-2:#0b1220; --text:#e5e7eb; --muted:#9ca3af; --accent:#7c3aed; --accent-2:#22c55e; --border:#1f2937; }
+      *{box-sizing:border-box}
+      html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+      a{color:#93c5fd;text-decoration:none} a:hover{text-decoration:underline}
+      .wrap{max-width:1100px;margin:0 auto;padding:32px 20px 60px}
+      header{margin-bottom:20px}
+      h1{font-size:28px;margin:0 0 6px;letter-spacing:.2px}
+      .tag{display:inline-block;font-size:12px;color:var(--muted);background:var(--panel);border:1px solid var(--border);border-radius:999px;padding:2px 10px;margin-right:8px}
+      .lead{margin:14px 0 10px;color:var(--muted)}
+      .hero{background:linear-gradient(140deg,rgba(124,58,237,.2),rgba(34,197,94,.1));border:1px solid var(--border);border-radius:14px;padding:16px 18px;margin:22px 0 28px}
+      .hero strong{color:#fff}
+      h2{font-size:20px;margin:26px 0 12px}
+      h3{font-size:16px;margin:16px 0 10px;color:var(--muted);font-weight:600}
+      .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+      .card{background:linear-gradient(180deg,var(--panel),var(--panel-2));border:1px solid var(--border);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+      .card-header{padding:12px 14px;border-bottom:1px solid var(--border);font-weight:600;color:#fff;display:flex;align-items:center;gap:8px}
+      .card-body{padding:12px 14px;color:var(--muted)} .card-body p{margin:0 0 10px}
+      .art{background:#0a0f1c;padding:8px;border-top:1px solid var(--border)}
+      .art img,.art svg,.art picture{display:block;width:100%;height:auto;border-radius:8px}
+      .links{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+      .chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:#0e1627;border:1px solid var(--border);color:var(--text);font-size:12px}
+      .chip b{color:var(--accent-2);font-weight:600}
+      .muted{color:var(--muted)} .footnote{font-size:12px;color:var(--muted);margin-top:10px}
+      .list{background:linear-gradient(180deg,var(--panel),var(--panel-2));border:1px solid var(--border);border-radius:10px;padding:12px 14px}
+      .list ul{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+      .list li{display:flex;justify-content:space-between;gap:8px}
+      .list code{color:#bfdbfe}
     </style>
   </head>
   <body>
@@ -56,13 +41,13 @@
         <span class="tag">Karmaşık Ağ</span>
         <span class="tag">Yapısal Risk</span>
         <h1>NPM Ekosisteminde Yönlü Karmaşık Ağ Analizi</h1>
-        <div class="lead">Merkeziyet metrikleri ve bileşik risk skorlarıyla paketlerin yapısal riskini nicel inceliyoruz.</div>
+        <div class="lead">Merkeziyet metrikleri ve bileşik risk skoru ile paketlerin yapısal riskini nicel inceliyoruz.</div>
       </header>
 
       <section class="hero">
-        <div class="kicker">Çalışmanın Özeti</div>
+        <div class="kicker">Çalışmanın özeti</div>
         <p><strong>Konu:</strong> Yazılım tedarik zinciri saldırıları (SSCA) bağlamında, NPM ekosistemindeki paketlerin yapısal riskini ağ bilimi ile incelemek.</p>
-        <p><strong>Amaç:</strong> Klasik güvenlik değerlendirmelerinin (CVSS vb.) ötesine geçip, bir paketin bağımlılık ağı içindeki konumu üzerinden sistemik riskini ölçmek.</p>
+        <p><strong>Amaç:</strong> Klasik güvenlik değerlendirmelerinin (CVSS vb.) ötesine geçip, bir paketin bağımlılık ağındaki konumu üzerinden sistemik riskini ölçmek.</p>
         <p><strong>Özgün Katkı:</strong> NPM paketlerini yönlü bir karmaşık ağ olarak modellemek; ele geçirilme durumunda oluşacak basamaklanma etkisini ve merkeziyet metrikleri (in-degree, betweenness) ile öngörülen sistemik riski nicel olarak sunmak.</p>
       </section>
 
@@ -88,7 +73,7 @@
           </div>
 
           <div class="card">
-            <div class="card-header">Top N İndüklenmiş Alt-Ağ</div>
+            <div class="card-header">Top N Endeksli Alt-Ağ</div>
             <div class="art">
               <picture>
                 <source type="image/svg+xml" srcset="results/network_topN_only.svg" />
@@ -261,14 +246,35 @@
             <li><code>results/cache_deps.json</code> <span class="muted">Bağımlılık sorguları için önbellek</span></li>
           </ul>
         </div>
-        <div class="footnote">Ayrıntılı açıklamalar için paper/main.pdf — LaTeX kaynağı: <code>paper/main.tex</code>.</div>
+        <div class="footnote">Ayrıntılı açıklamalar için makale PDF: <a href="academic/paper_topolojik_risk_2025.pdf">academic/paper_topolojik_risk_2025.pdf</a> — LaTeX kaynağı: <code>academic/paper_topolojik_risk_2025.tex</code>.</div>
+      </section>
+
+      <!-- Ek İçerik: Hızlı Linkler ve Yeniden Üretim -->
+      <section class="section">
+        <h2>Hızlı Linkler</h2>
+        <div class="list">
+          <ul>
+            <li><a href="academic/paper_topolojik_risk_2025.pdf">Akademik Bildiri (PDF)</a> <span class="muted">— Sonuçların detaylı anlatımı</span></li>
+            <li><a href="academic/LITERATURE_REVIEW.md">Literatür Taraması (MD)</a> <span class="muted">— 30 kaynakla kapsamlı özet</span></li>
+            <li><a href="analysis/analysis.ipynb">Analiz Not Defteri (ipynb)</a> <span class="muted">— Notebook üzerinden çalıştırma</span></li>
+            <li><a href="results/Readme.md">Sonuçlar Readme</a> <span class="muted">— BRS, metodoloji ve görsel özet</span></li>
+          </ul>
+        </div>
+        <h3>Nasıl Yeniden Üretilir?</h3>
+        <div class="list">
+          <ul>
+            <li><code>analysis/analysis.ipynb</code> dosyasını açın ve adımları sırayla çalıştırın.</li>
+            <li>Üretilen çıktıların tamamı <code>results/</code> klasörüne yazılır.</li>
+            <li>Makale PDF’si için LaTeX: <code>cd academic && pdflatex paper_topolojik_risk_2025.tex</code></li>
+          </ul>
+        </div>
       </section>
 
       <footer class="section">
-        <div class="muted">Bu sayfa, results/ dizinindeki çıktıların özlü bir sunumudur. Kaynak ve rapor: <a href="paper/main.pdf">paper/main.pdf</a>.</div>
+        <div class="muted">Bu sayfa, <code>results/</code> dizinindeki çıktıların hızlı bir sunumudur. Kaynaklar ve raporlar academic/ ve analysis/ klasörlerindedir.</div>
       </footer>
 
     </div>
   </body>
-</html>
+  </html>
 
