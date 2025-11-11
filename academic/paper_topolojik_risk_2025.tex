@@ -8,6 +8,8 @@
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage[section]{placeins}
+\usepackage{flafter}
+\usepackage{etoolbox}
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{booktabs}
@@ -25,6 +27,12 @@
 \floatplacement{figure}{H}
 \floatplacement{table}{H}
 \captionsetup{font=small,labelfont=bf}
+% Ensure floats do not cross headings and appear after their definitions
+\preto\section{\FloatBarrier}
+\preto\subsection{\FloatBarrier}
+\AfterEndEnvironment{figure}{\FloatBarrier}
+\AfterEndEnvironment{table}{\FloatBarrier}
+\AfterEndEnvironment{longtable}{\FloatBarrier}
 
 \title{Yazılım Tedarik Zincirinde Kritiklik Haritalaması\\En Popüler 1000 NPM Paketinin Topolojik Risk Değerlendirmesi}
 \author{\textbf{Yusuf Talha ARABACI}}
@@ -36,6 +44,8 @@
 \begin{abstract}
 NPM ekosisteminde tek bir bağımlılıktaki kusur veya kötü niyetli değişiklik, transitif bağımlılıklar üzerinden geniş bir etki alanına yayılabilir. Bu bildiri, paket içeriklerinden ziyade paketler arası ilişkilerin \emph{topolojik} yapısına odaklanır. Bağımlı $\to$ bağımlılık yönünde kurulan yönlü ağ üzerinde in-degree, out-degree ve betweenness merkeziyetleri hesaplanır; bu ölçüler min–max normalizasyonu ile bir \emph{Bileşik Risk Skoru}na (BRS) dönüştürülür. Ayrıca, en kritik düğümlerin çıkartılmasıyla ağın bağlanırlılığı üzerinde bir \emph{sağlamlık} değerlendirmesi yapılır. Tüm görseller ve tablolar \texttt{results/} dizinindeki çıktılara dayanır ve ilgili başlıklar altında sunulur.
 \end{abstract}
+
+\clearpage
 
 \section{Giriş ve Özgün Katkı}
 Modern yazılım tedarik zincirinde tek bir bağımlılıktaki hata ya da kasıtlı değişiklik, transitif bağımlılıklar üzerinden yüzlerce hatta binlerce projeye yayılabilir. NPM ekosistemi; ölçek, sürüm sıklığı ve yoğun bağımlılık grafiği nedeniyle bu tür zincirleme risklere özellikle açıktır. Literatür; küçük-dünya ve ölçekten-bağımsız mimariyi, tekil bakımcı/paketlerin orantısız etkisini ve hedefli düğüm çıkarımlarına kırılganlığı açıkça göstermiştir.
@@ -140,4 +150,3 @@ Popülerlik ve yapısal merkeziyet, indirime dayalı çekirdekte \emph{Bileşik 
 \end{longtable}
 
 \end{document}
-
