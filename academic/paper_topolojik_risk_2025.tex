@@ -20,7 +20,7 @@
 \usepackage{amsmath,amssymb}
 \usepackage{microtype}
 
-\geometry{margin=1.8cm}
+\geometry{margin=1.4cm}
 \hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
 % Make figure lookup robust regardless of build CWD
 \graphicspath{{../results/}{results/}{./}{../}}
@@ -121,6 +121,7 @@ Etki alanı, ters graf üzerinde (\(G^{\mathrm{rev}}\)) erişilebilir düğüm s
 
 \section{Bulgular}
 \subsection{Ölçek ve Bileşen Yapısı}
+
 Graf istatistikleri (\texttt{graph\_stats.json}):\\
 \begin{tabular}{@{}ll@{}}\toprule
 \textbf{Düğüm sayısı} & 2264 \\
@@ -138,9 +139,9 @@ Graf istatistikleri (\texttt{graph\_stats.json}):\\
 \textit{Yorum —} Az sayıda yüksek dereceli paket, sistemik riski belirgin biçimde taşır.
 
 \subsection{En Merkezi Paketler ve Korelasyonlar}
-\begin{figure}[H]\centering\includegraphics{top10_in_degree.png}\caption{In-degree açısından ilk 10 paket.}\end{figure}
-\begin{figure}[H]\centering\includegraphics{top10_out_degree.png}\caption{Out-degree açısından ilk 10 paket.}\end{figure}
-\begin{figure}[H]\centering\includegraphics{top10_betweenness.png}\caption{Betweenness açısından ilk 10 paket.}\end{figure}
+% \begin{figure}[H]\centering\includegraphics{top10_in_degree.png}\caption{In-degree açısından ilk 10 paket.}\end{figure}
+% \begin{figure}[H]\centering\includegraphics{top10_out_degree.png}\caption{Out-degree açısından ilk 10 paket.}\end{figure}
+% \begin{figure}[H]\centering\includegraphics{top10_betweenness.png}\caption{Betweenness açısından ilk 10 paket.}\end{figure}
 \begin{figure}[H]\centering\includegraphics{scatter_correlations.png}\caption{Merkeziyet ölçüleri arası korelasyonlar.}\end{figure}
 \begin{figure}[H]\centering\includegraphics{top10_leaders.png}\caption{Birleşik liderler görünümü (merkeziyeti yüksek düğümler).}\end{figure}
 
