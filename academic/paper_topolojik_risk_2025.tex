@@ -57,6 +57,8 @@ Bu çalışmanın \textbf{özgün katkıları}:
   \item BRS, tespit hatları (Amalfi, Cerebro, OSCAR) için \textbf{öncelikli tarama kuyruğu} ve politika/bütünlük hattı (in-toto, imza benimsemesi) için \textbf{hedef paket listeleri} üretmek üzere konumlandırılır.
 \end{itemize}
 
+Kod ve özet sonuçlar: \url{https://yusufarbc.github.io/npm-complex-network-analysis/}
+
 \section{Literatür Taraması}
 Tehdit taksonomileri ve vaka derlemeleri (Backstabber’s Knife Collection; Hitchhiker’s Guide; yorumlanan dillerde kayıt suistimali) ekosistemler-arası kurulum/çalışma zamanı teknik haritasını sağlamlaştırır. NPM-odaklı pratik riskler ve fenomenler (Wyss; prototip kirliliği ve meta-suistimal çalışmaları) ekosistem davranışını ayrıntılandırır. Ağ bilimi cephesinde Zimmermann, Hafner ve Oldnall; küçük-dünya/ölçekten-bağımsız yapı ve hedefli düğüm çıkarımlarında kırılganlığı niceller. Doğru geçişli çözümleme hattı (DVGraph/DTResolver) resmi kurallara sadık kalarak transitive yayılımı hassas biçimde ortaya koyar. Tespit hattında Amalfi, Cerebro, OSCAR ve çapraz-dil yaklaşımlar güçlü sonuçlar üretir. Bakım/güncellik ekseninde TOOD/PFET, Cogo, Ahlstrom ve Imtiaz; güncellik, bakım pratikleri ve bildirim gecikmelerinin etkisini gösterir. Politika/bütünlük ekseninde in-toto, imza benimsemesi ve depo/artifakt kimliği-doğrulama önerileri “ne yapılmalı?”yı tanımlar. Eksik olan, popülerlik ve topolojik merkeziyetin indirime dayalı çekirdekte tek bir \emph{operasyonel kritiklik} ölçütünde birleşmesi ve bu ölçütün tespit ile politika hatlarına \emph{sıralı öncelik listeleri} olarak yansımasıdır.
 
@@ -87,6 +89,18 @@ Etki alanı, ters graf üzerinde (\(G^{\mathrm{rev}}\)) erişilebilir düğüm s
 \texttt{edges.csv}, \texttt{metrics.csv}, \texttt{risk\_scores.csv}, \texttt{graph\_stats.json} ve görseller (PNG/SVG) \texttt{results/} altında üretilmiştir.
 
 \section{Bulgular}
+\subsection{Ölçek ve Bileşen Yapısı}
+Graf istatistikleri (\texttt{graph\_stats.json}):\\
+\begin{tabular}{@{}ll@{}}\toprule
+\textbf{Düğüm sayısı} & 2264 \\
+\textbf{Kenar sayısı} & 3763 \\
+\textbf{Bileşen sayısı} & 253 \\
+\textbf{En büyük bileşen} & 1866 düğüm \\
+\textbf{Ort. in-degree} & 1.662 \\
+\textbf{Ort. out-degree} & 1.662 \\\bottomrule
+\end{tabular}
+
+\textit{Yorum —} Ağ seyrek ve parçalıdır; en büyük bağlı bileşen (LCC) çekirdeği temsil eder ve hedefli çıkarımlara duyarlıdır.
 \subsection{Ağ Görünümü ve Derece Dağılımları}
 \begin{figure}[H]\centering\includegraphics{network_full_topN.png}\caption{Top 1000 çekirdeğin tam ağ görselleştirmesi. Yoğun çekirdek bölgeleri omurga paket kümelerini işaret eder.}\end{figure}
 \begin{figure}[H]\centering\includegraphics{degree_histograms.png}\caption{In-degree ve out-degree histogramları: ağır kuyruklu dağılımlar.}\end{figure}
@@ -97,6 +111,7 @@ Etki alanı, ters graf üzerinde (\(G^{\mathrm{rev}}\)) erişilebilir düğüm s
 \begin{figure}[H]\centering\includegraphics{top10_out_degree.png}\caption{Out-degree açısından ilk 10 paket.}\end{figure}
 \begin{figure}[H]\centering\includegraphics{top10_betweenness.png}\caption{Betweenness açısından ilk 10 paket.}\end{figure}
 \begin{figure}[H]\centering\includegraphics{scatter_correlations.png}\caption{Merkeziyet ölçüleri arası korelasyonlar.}\end{figure}
+\begin{figure}[H]\centering\includegraphics{top10_leaders.png}\caption{Birleşik liderler görünümü (merkeziyeti yüksek düğümler).}\end{figure}
 
 \subsection{Bileşik Risk Sıralaması}
 \begin{figure}[H]\centering\includegraphics{top20_risk.png}\caption{BRS açısından ilk 20 paket.}\end{figure}
@@ -119,9 +134,33 @@ Etki alanı, ters graf üzerinde (\(G^{\mathrm{rev}}\)) erişilebilir düğüm s
 \begin{figure}[H]\centering\includegraphics{cascade_impact_top20.png}\caption{İlk 20 paketin çıkarımının LCC ve erişilebilirlik üzerindeki etkisi.}\end{figure}
 \textit{Yorum —} Hedefli çıkarımlar, rastgele çıkarımlara kıyasla LCC’yi daha hızlı küçültür ve ortalama yol uzunluğunu artırır; bu da BRS’in sistemik riski iyi yordadığını gösterir.
 
+\subsection{Köprü Kenarlar}
+Kenar betweenness’e göre ilk 10 köprü kenar (\texttt{edge\_betweenness\_top10.csv}):\\
+\begin{tabular}{@{}lll@{}}\toprule
+\textbf{u} & \textbf{v} & \textbf{edge\_betweenness} \\\midrule
+prop-types & object-assign & 0.000025 \\
+prop-types & loose-envify & 0.000024 \\
+prop-types & react-is & 0.000024 \\
+@react-native/metro-babel-transformer & @react-native/babel-preset & 0.000022 \\
+@react-native/metro-config & @react-native/metro-babel-transformer & 0.000012 \\
+@react-native/community-cli-plugin & @react-native/dev-middleware & 0.000011 \\
+@types/react-native-video & react-native & 0.000011 \\
+@types/react & csstype & 0.000009 \\
+react-aria-components & react-aria & 0.000009 \\
+@react-aria/utils & clsx & 0.000008 \\\bottomrule
+\end{tabular}
+
+\textit{Yorum —} Köprü kenarların hedeflenmesi, topluluklar arası ayrışmayı hızlandırır; bu kenarlar değiştikçe BRS sıralamasındaki düğümlerin etkisi de farklılaşabilir.
+
 \section{Tartışma}
 \textbf{Operasyonelleştirme.} BRS, dinamik tespit hatları (Amalfi, Cerebro, OSCAR) için bir \emph{topolojik ön-filtre} olarak kullanılabilir; böylece sınırlı analist kapasitesi yüksek riskli düğümlere yöneltilir. Politika/bütünlük hattında (in-toto, imza benimsemesi) BRS tabanlı hedef listeleriyle imza kapsamı ve doğrulanabilirlik artar.\newline
 \textbf{Duyarlılık.} Ağırlıkların (0.5/0.2/0.3) varyasyonu ve betweenness örnekleme \(k\) parametresi üzerinde duyarlılık analizleri, sıralamanın kararlı olduğunu göstermektedir (ayrıntılar: \texttt{robustness\_risk.json}).
+
+\section{Yeniden Üretilebilirlik}
+\textbf{Çalışma ortamı.} Notebook tabanlı analiz (\texttt{analysis/analysis.ipynb}); Python 3, NetworkX, pandas, numpy, matplotlib/seaborn. Yalnızca not defteri üzerinden çalıştırma desteklidir.\\
+\textbf{Veri ve önbellek.} Top-N listesi ecosyste.ms/NPM Search/npms.io birleşik akışından; bağımlılıklar NPM registry üzerinden toplanır ve disk önbelleği ile hızlandırılır.\\
+\textbf{Parametreler.} Betweenness örnekleme \(k\!\approx\!200\); metrikler min–max ile ölçeklenir; ağırlıklar \(w_{in},w_{out},w_{btw})=(0.5,0.2,0.3).\\
+\textbf{Çıktılar.} \texttt{results/} altında CSV/JSON ve tüm görseller üretilir; \LaTeX\ makale \texttt{academic/} altında derlenir.
 
 \section{Sınırlılıklar ve Gelecek Çalışmalar}
 İndirme-temelli Top-1000 çekirdek, uzun kuyrukta kalan paketleri dışarıda bırakır; gelecekte kayan pencere ve ekosistemler-arası (PyPI, Cargo) karşılaştırmalar planlanmaktadır. Betweenness örnekleme hatası azaltımı ve kullanım yoğunluğu için daha zengin sinyallerin (örgütsel, bakım) entegrasyonu hedeflenmektedir.
