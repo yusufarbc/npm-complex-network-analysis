@@ -1,4 +1,4 @@
-# Literatür Taraması — NPM Yazılım Tedarik Zinciri Güvenliği (UTF‑8)
+# Literatür Taraması — NPM Yazılım Tedarik Zinciri Güvenliği
 
 Çalışma Tarihi: Ekim 2025
 
